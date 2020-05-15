@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Citizens_app</string>
+    <string name="map_key" translatable="false">AIzaSyBrOLGHU4DwIJw4PLoe3l8qutFKg1yxtso</string>
+
+
+
+    <string name="change_photo">change_photo</string>
+</resources>
