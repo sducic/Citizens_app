@@ -8,153 +8,91 @@
     tools:context=".RegisterActivity">
 
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="72dp"
-        android:background="#FF2822EA"
-        android:orientation="horizontal"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="0dp">
-
-        <TextView
-            android:layout_width="201dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="120dp"
-            android:layout_marginTop="10dp"
-            android:text="New Account"
-            android:textColor="#FFFFFF"
-            android:textSize="30dp" />
-
-    </LinearLayout>
-
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/inputUsername"
-        android:layout_width="372dp"
-        android:layout_height="43dp"
-        android:layout_marginStart="26dp"
-        android:layout_marginLeft="26dp"
-        android:layout_marginTop="59dp"
-        android:layout_marginEnd="41dp"
-        android:layout_marginRight="41dp"
-        android:hint="Username"
-        android:soundEffectsEnabled="true"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textSize="10pt"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4">
-
-    </androidx.appcompat.widget.AppCompatEditText>
-
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/inputEmail"
-        android:layout_width="372dp"
-        android:layout_height="43dp"
-        android:layout_marginStart="26dp"
-        android:layout_marginLeft="26dp"
-        android:layout_marginTop="19dp"
-        android:layout_marginEnd="41dp"
-        android:layout_marginRight="41dp"
-        android:hint="E-mail"
-        android:soundEffectsEnabled="true"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textSize="10pt"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputUsername">
-
-    </androidx.appcompat.widget.AppCompatEditText>
-
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/inputPassword"
-        android:layout_width="372dp"
-        android:layout_height="43dp"
-        android:layout_marginStart="26dp"
-        android:layout_marginLeft="26dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="41dp"
-        android:layout_marginRight="41dp"
-        android:hint="Password"
-        android:soundEffectsEnabled="true"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textSize="10pt"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputEmail">
-
-    </androidx.appcompat.widget.AppCompatEditText>
-
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/inputRepPassword"
-        android:layout_width="372dp"
-        android:layout_height="43dp"
-        android:layout_marginStart="26dp"
-        android:layout_marginLeft="26dp"
-        android:layout_marginTop="17dp"
-        android:layout_marginEnd="41dp"
-        android:layout_marginRight="41dp"
-        android:hint="Password"
-        android:soundEffectsEnabled="true"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textSize="10pt"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputPassword">
-
-    </androidx.appcompat.widget.AppCompatEditText>
-
-
-    <TextView
-        android:id="@+id/textView4"
+    <EditText
+        android:id="@+id/phone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="63dp"
-        android:layout_marginLeft="63dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="64dp"
-        android:layout_marginRight="64dp"
-        android:text="Upload your profile photo"
-        android:textSize="12pt"
+        android:ems="10"
+        android:hint="Phone Number"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/btnCreate"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageButton2" />
+        app:layout_constraintTop_toBottomOf="@+id/prezime" />
 
     <Button
         android:id="@+id/btnCreate"
         android:layout_width="159dp"
         android:layout_height="56dp"
-        android:layout_marginStart="140dp"
-        android:layout_marginLeft="140dp"
-        android:layout_marginTop="61dp"
-        android:layout_marginEnd="140dp"
-        android:layout_marginRight="140dp"
 
         android:background="#FF2822EA"
         android:text="Create"
         android:textColor="#FFFFFF"
         android:textSize="10pt"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputRepPassword" />
+        app:layout_constraintTop_toBottomOf="@+id/phone" />
 
-    <ImageButton
-        android:id="@+id/imageButton2"
-        android:layout_width="124dp"
-        android:layout_height="116dp"
-        android:layout_marginStart="155dp"
-        android:layout_marginLeft="155dp"
-        android:layout_marginTop="52dp"
-        android:layout_marginEnd="156dp"
-        android:layout_marginRight="156dp"
-        android:layout_marginBottom="61dp"
-        android:background="@mipmap/ic_launcher_profile"
-        app:layout_constraintBottom_toTopOf="@+id/textView4"
+    <EditText
+        android:id="@+id/username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Username"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/pass1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        tools:ignore="VectorDrawableCompat" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/pass1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/pass2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/username" />
+
+    <EditText
+        android:id="@+id/pass2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/ime"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pass1" />
+
+    <EditText
+        android:id="@+id/ime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="First Name"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/prezime"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pass2" />
+
+    <EditText
+        android:id="@+id/prezime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Last Name"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/phone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ime" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

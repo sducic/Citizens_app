@@ -1,61 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
     tools:context=".MainActivity">
 
+
     <ImageView
+        android:id="@+id/imageView3"
         android:layout_width="286dp"
         android:layout_height="269dp"
-        android:layout_marginTop="70dp"
-        android:layout_marginLeft="55dp"
         android:src="@drawable/backgr"
-        tools:layout_editor_absoluteX="62dp"
-        tools:layout_editor_absoluteY="124dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="CITIZENS"
-        android:textColor="#FF000309"
-        android:textSize="40dp"
-        android:layout_marginTop="300dp"
-        android:layout_marginLeft="120dp"/>
+        app:layout_constraintBottom_toTopOf="@+id/editText2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.52"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/editText2"
         android:layout_width="282dp"
         android:layout_height="50dp"
-        android:layout_marginLeft="70dp"
-        android:layout_marginTop="420dp"
         android:ems="10"
+        android:hint="Username"
         android:inputType="textPersonName"
-        android:hint="Username" />
+        app:layout_constraintBottom_toTopOf="@+id/editText3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
 
     <EditText
         android:id="@+id/editText3"
         android:layout_width="282dp"
         android:layout_height="50dp"
         android:ems="10"
+        android:hint="Password"
         android:inputType="textPassword"
-        android:layout_marginTop="480dp"
-        android:layout_marginLeft="70dp"
-        android:hint="Password"/>
-
+        app:layout_constraintBottom_toTopOf="@+id/loginBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editText2" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/loginBtn"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:text="LogIn"
-        android:layout_marginTop="570dp"
-        android:layout_marginLeft="110dp"
         android:background="#FF817D7D"
-        android:textSize="20dp">
+        android:text="LogIn"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnRegister"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editText3">
 
     </androidx.appcompat.widget.AppCompatButton>
 
@@ -63,12 +60,14 @@
         android:id="@+id/btnRegister"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:text="Register"
-        android:layout_marginTop="640dp"
-        android:layout_marginLeft="110dp"
         android:background="#FF817D7D"
-        android:textSize="20dp">
+        android:text="Register"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/loginBtn">
 
     </androidx.appcompat.widget.AppCompatButton>
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
