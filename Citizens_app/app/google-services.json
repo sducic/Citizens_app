@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "491543432504",
+    "firebase_url": "https://citizensapp-b9609.firebaseio.com",
+    "project_id": "citizensapp-b9609",
+    "storage_bucket": "citizensapp-b9609.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:491543432504:android:5ab63bc428b3472638c5cd",
+        "android_client_info": {
+          "package_name": "elfak.mosis.zeljko.citzens_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "491543432504-ptovaq25khhmkd1sqglcptii2t074k3j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "elfak.mosis.zeljko.citzens_app",
+            "certificate_hash": "3b98579364a4206278672da04c754860a4107585"
+          }
+        },
+        {
+          "client_id": "491543432504-07p2s5n06ik5rps9116v5uej1dj43a77.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfxo9aWHcktOg-hBZIHQiL5FcwI8RrXuM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "491543432504-07p2s5n06ik5rps9116v5uej1dj43a77.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
