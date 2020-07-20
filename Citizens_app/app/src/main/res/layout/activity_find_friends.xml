@@ -8,119 +8,118 @@
     android:background="#FFFFFF"
     tools:context=".FindFriends">
 
-
-    <Button
-        android:id="@+id/btnDevices"
-        android:layout_width="201dp"
-        android:layout_height="55dp"
-        android:layout_marginEnd="210dp"
-        android:layout_marginRight="210dp"
-        android:background="#FFFFFFFF"
-        android:text="Find devices"
-        android:textColor="#FF00AAF6"
-        app:layout_constraintEnd_toEndOf="@+id/btnFriends1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/btnFriends1"
-        android:layout_width="208dp"
-        android:layout_height="55dp"
-        android:layout_marginStart="1dp"
-        android:layout_marginLeft="1dp"
-        android:layout_marginEnd="2dp"
-        android:layout_marginRight="2dp"
-        android:background="#FFFFFFFF"
-        android:text="Friends"
-        android:textColor="#FF00AAF6"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btnDevices"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.004">
+
+        <Button
+            android:id="@+id/btnFriends1"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="150dp"
+            android:background="#FFFFFFFF"
+            android:text="Friends"
+            android:textColor="#FF00AAF6"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.994"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0"   />
+
+        <Button
+            android:id="@+id/btnDevices"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFFFF"
+            android:text="Find devices"
+            android:textColor="#FF00AAF6"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
         android:id="@+id/btnFindUnpairedDevices"
         android:layout_width="112dp"
         android:layout_height="36dp"
         android:layout_alignParentRight="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="35dp"
-        android:layout_marginEnd="283dp"
-        android:layout_marginRight="283dp"
-        android:layout_marginBottom="11dp"
         android:onClick="btnDiscover"
         android:text="Discover"
-        app:layout_constraintBottom_toTopOf="@+id/lvNewDevices"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.307" />
 
     <ListView
         android:id="@+id/lvNewDevices"
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:layout_below="@+id/btnFindUnpairedDevices"
-        android:layout_marginTop="49dp"
-        android:layout_marginBottom="292dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnONOFF"
-        app:layout_constraintVertical_bias="0.476"
-        tools:layout_editor_absoluteX="0dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="102dp"
         android:layout_height="22dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="9dp"
-        android:layout_marginEnd="330dp"
-        android:layout_marginRight="330dp"
         android:text="Bluetooth:"
         android:textColor="#FF08070B"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.022"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnDevices" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.121" />
 
     <Switch
         android:id="@+id/btnONOFF"
-        android:layout_width="48dp"
-        android:layout_height="27dp"
-        android:layout_marginStart="229dp"
-        android:layout_marginLeft="229dp"
-        android:layout_marginTop="9dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView"
-        app:layout_constraintTop_toBottomOf="@+id/btnFriends1" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/lvNewDevices"
+        app:layout_constraintHorizontal_bias="0.942"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.122" />
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="24dp"
         android:text="Enable discoverable"
         android:textColor="#FF08070B"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.025"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.204" />
 
     <Button
         android:id="@+id/btnDiscoverable_on_off"
-        android:layout_width="112dp"
-        android:layout_height="36dp"
-        android:layout_marginStart="143dp"
-        android:layout_marginLeft="143dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="13dp"
-        android:layout_marginRight="13dp"
-        android:text="On/Off"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:onClick="btnEnableDisable_Discoverable"
+        android:text="On/Off"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView2"
-        app:layout_constraintTop_toBottomOf="@+id/btnONOFF" />
+        app:layout_constraintHorizontal_bias="0.931"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.216" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
