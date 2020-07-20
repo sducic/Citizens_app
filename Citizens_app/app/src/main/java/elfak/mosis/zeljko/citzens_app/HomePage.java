@@ -8,9 +8,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class HomePage extends AppCompatActivity {
 
     ImageButton btnMaps, btnFriends, btnCoins, btnProfile;
+    Button btnLog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,5 +56,16 @@ public class HomePage extends AppCompatActivity {
             }
         });
 
+        btnLog=findViewById(R.id.button_logout);
+
+        btnLog.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                finish();
+            }
+        });
     }
 }
