@@ -1,11 +1,13 @@
 package elfak.mosis.zeljko.citzens_app;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Camera;
@@ -33,8 +35,14 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Maps extends FragmentActivity implements OnMapReadyCallback {
@@ -47,7 +55,18 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     FusedLocationProviderClient client;
 
 
+    Button addObject;
+    private boolean selCoorsEnabled = false;
+    private LatLng placeLoc;
+    public static final int SELECT_COORDINATES = 2;
+    private int state = 0;
+    static final int PERMISSION_ACCESS_FINE_LOCATION = 1;
+    public static final int SHOW_MAP = 0;
+    public static final int CENTER_PLACE_ON_MAP = 1;
 
+
+    DatabaseReference database;
+    int position = -1;
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT_WATCH)
 
@@ -55,6 +74,16 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        database = FirebaseDatabase.getInstance().getReference().child("my-objects");
+
+        Intent listIntent = getIntent();
+        Bundle positionBundle = listIntent.getExtras();
+        if(positionBundle != null)
+            position = positionBundle.getInt("position");
+
+
+
 
         searchView = findViewById(R.id.sv_location);
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -70,6 +99,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
             //call method
             getCurrentLocation();
+            setOnMapClickListener();
         } else {
             //when permission denied
 
@@ -110,6 +140,33 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         });
 
         mapFragment.getMapAsync(this);
+
+
+
+
+        //add object
+
+        addObject = findViewById(R.id.add_object_btn);
+
+        addObject.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                if(!selCoorsEnabled) {
+                    Toast.makeText(getApplicationContext(),"Select coord",Toast.LENGTH_SHORT).show();
+                    selCoorsEnabled = true;
+                }
+
+
+            }
+        });
+
+
+
+
+        ///read object from firebase
+
+
     }
 
     private void getCurrentLocation() {
@@ -138,6 +195,9 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 }
             }
         });
+
+
+
     }
 
 
@@ -145,7 +205,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
         map = googleMap;
 
-        map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+      /*  map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 
             @Override
             public void onMapClick(LatLng latlng) {
@@ -161,8 +221,18 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 map.addMarker(markerOptions);
 
 
+
             }
-        });
+        });*/
+
+
+
+      setOnMapClickListener();
+      addObjectMarkers();
+
+
+
+
 
 
 
@@ -178,6 +248,89 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 getCurrentLocation();
             }
+        }
+
+    }
+
+
+    private HashMap<Marker, Integer> markerPlaceIdMap;
+    private void addObjectMarkers()
+    {
+        ArrayList<Object> objects = MyObjectData.getInstance().getMyObjects();
+        markerPlaceIdMap = new HashMap<>((int)((double)objects.size()*1.2));
+
+
+        map.clear();
+        String br = Integer.toString(objects.size());
+        Toast.makeText(getApplicationContext(),br,Toast.LENGTH_SHORT).show();
+        for(int i = 0;i<objects.size();i++) {
+            Object object = objects.get(i);
+            Toast.makeText(getApplicationContext(),"nssssss",Toast.LENGTH_SHORT).show();
+             String lat = object.getLatitude();
+             String lon = object.getLongitude();
+            LatLng loc = new LatLng(Double.parseDouble(lat), Double.parseDouble(lon));
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(loc);
+            markerOptions.title(object.getName());
+            Marker marker = map.addMarker(markerOptions);
+            markerPlaceIdMap.put(marker, i);
+
+
+
+        }
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        try{
+            if(resultCode == Activity.RESULT_OK)
+            {
+                addObjectMarkers();
+            }
+        }catch(Exception e)
+        {
+
+        }
+    }
+
+
+    private void setOnMapClickListener(){
+
+        if(map!=null) {
+
+
+            map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+
+                @Override
+                public void onMapClick(LatLng latLng) {
+
+
+
+                        String lon = Double.toString(latLng.longitude);
+                        String lat = Double.toString(latLng.latitude);
+                        Intent locationIntent = new Intent();
+                        locationIntent.putExtra("lon", lon);
+                        locationIntent.putExtra("lat", lat);
+                        setResult(Activity.RESULT_OK, locationIntent);
+
+
+                        Toast.makeText(getApplicationContext(), lon + " : " + lat, Toast.LENGTH_SHORT).show();
+                        Intent i = new Intent(getApplicationContext(),AddObject.class);
+                        i.putExtra("Longitude",lon);
+                        i.putExtra("Latitude", lat);
+                        startActivityForResult(i,1);
+
+                        finish();
+
+
+
+
+
+                }
+            });
         }
     }
 }

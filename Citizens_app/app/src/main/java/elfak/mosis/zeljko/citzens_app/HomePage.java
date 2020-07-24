@@ -25,7 +25,8 @@ public class HomePage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HomePage.this, Maps.class);
-                startActivity(intent);
+                intent.putExtra("state",Maps.SELECT_COORDINATES);
+                startActivityForResult(intent,1);
             }
         });
 
@@ -67,5 +68,7 @@ public class HomePage extends AppCompatActivity {
                 finish();
             }
         });
+
+
     }
 }

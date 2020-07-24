@@ -21,7 +21,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Maps"></activity>
+        <activity android:name=".AddObject"></activity>
+        <activity android:name=".Maps" />
         <activity android:name=".Profile" />
         <activity android:name=".Coins" />
         <activity android:name=".RegisterActivity" />
