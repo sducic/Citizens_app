@@ -33,7 +33,7 @@ public class HomePage extends AppCompatActivity {
         btnFriends.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(HomePage.this, FindFriends.class);
+                Intent intent = new Intent(HomePage.this, AddFriend.class);
                 startActivity(intent);
             }
         });

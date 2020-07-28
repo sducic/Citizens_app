@@ -116,6 +116,11 @@ public class RegisterActivity extends AppCompatActivity {
                     editTextPassword1.setError("Password don't match");    return;
                 }
 
+                if(slika==null)
+                {
+                    Toast.makeText(RegisterActivity.this,"Please upload profile photo!", Toast.LENGTH_SHORT).show();
+                }
+
 
                 progressBar.setVisibility(View.VISIBLE);
 
