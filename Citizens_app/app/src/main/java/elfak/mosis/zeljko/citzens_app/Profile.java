@@ -13,8 +13,10 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -26,6 +28,11 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -38,19 +45,25 @@ public class Profile extends AppCompatActivity {
 
     private static final String TAG = "Profile";
 
+    Button btnLog;
     ImageView profileImageView;
     FirebaseAuth fAuth;
     private static Bitmap slika = null;
+    TextView email,phoneNumber,fullName;
 
     int TAKE_IMAGE_CODE = 10001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_profile2);
 
         fAuth=FirebaseAuth.getInstance();
         profileImageView = findViewById(R.id.profile_image);
+        email=findViewById(R.id.txt_email);
+        phoneNumber=findViewById(R.id.txt_phone);
+        fullName=findViewById(R.id.txt_fullName);
+
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -63,8 +76,47 @@ public class Profile extends AppCompatActivity {
             }
         }
 
+        btnLog=findViewById(R.id.button_logout);
+
+        btnLog.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                finish();
+            }
+        });
+
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference uidRef = rootRef.child("Users").child(uid);
+        ValueEventListener valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String mail = dataSnapshot.child("email").getValue(String.class);
+                String name = dataSnapshot.child("fullName").getValue(String.class);
+                String phone = dataSnapshot.child("phoneNumber").getValue(String.class);
+               email.setText(mail);
+               fullName.setText(name);
+               phoneNumber.setText(phone);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d(TAG, databaseError.getMessage()); //Don't ignore errors!
+            }
+
+
+        };
+        uidRef.addListenerForSingleValueEvent(valueEventListener);
+
 
     }
+
+
 
     public void handleImageClick(View view) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
