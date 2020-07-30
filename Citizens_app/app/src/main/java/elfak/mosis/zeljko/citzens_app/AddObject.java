@@ -127,6 +127,9 @@ public class AddObject extends AppCompatActivity implements View.OnClickListener
                 Object object = new Object(nme, desc, categ, lat, lon);
                 MyObjectData.getInstance().addNewPlace(object);
                 Toast.makeText(getApplicationContext(), "Added object.", Toast.LENGTH_SHORT).show();
+
+                startActivity(new Intent(getApplicationContext(),Maps.class));
+
             }
         });
 

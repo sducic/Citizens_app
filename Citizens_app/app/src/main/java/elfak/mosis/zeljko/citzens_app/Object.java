@@ -9,13 +9,14 @@ import androidx.annotation.NonNull;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
+@IgnoreExtraProperties
 public class Object {
     public String name;
     public String category;
     public String description;
     public String longitude;
     public String latitude;
-
+    @Exclude
     public String key;
     public Object(){
 

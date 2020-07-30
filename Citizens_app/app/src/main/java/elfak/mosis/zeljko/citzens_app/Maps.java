@@ -30,6 +30,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -65,6 +66,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     public static final int CENTER_PLACE_ON_MAP = 1;
 
 
+    boolean toAddObject = false;
     DatabaseReference database;
     int position = -1;
 
@@ -108,6 +110,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         }
 
 
+        ///Searching
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -144,7 +147,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
 
 
-        //add object
+        //add object on click on map
 
         addObject = findViewById(R.id.add_object_btn);
 
@@ -155,16 +158,13 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 if(!selCoorsEnabled) {
                     Toast.makeText(getApplicationContext(),"Select coord",Toast.LENGTH_SHORT).show();
                     selCoorsEnabled = true;
-                }
+                    setOnMapClickListener();
+                                 }
 
 
             }
         });
 
-
-
-
-        ///read object from firebase
 
 
     }
@@ -197,47 +197,13 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         });
 
 
-
     }
 
 
     public void onMapReady(GoogleMap googleMap) {
 
         map = googleMap;
-
-      /*  map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-
-            @Override
-            public void onMapClick(LatLng latlng) {
-
-                MarkerOptions markerOptions = new MarkerOptions();
-                markerOptions.position(latlng);
-                //set lat and long on marker
-                markerOptions.title(latlng.latitude + " : " + latlng.longitude);
-                //clera the previously click pos
-                map.clear();
-                //   map.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng,10));
-
-                map.addMarker(markerOptions);
-
-
-
-            }
-        });*/
-
-
-
-      setOnMapClickListener();
-      addObjectMarkers();
-
-
-
-
-
-
-
-
-
+        addObjectMarkers();
 
     }
 
@@ -257,12 +223,12 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     private void addObjectMarkers()
     {
         ArrayList<Object> objects = MyObjectData.getInstance().getMyObjects();
-        markerPlaceIdMap = new HashMap<>((int)((double)objects.size()*1.2));
+        markerPlaceIdMap = new HashMap<Marker,Integer>((int)((double)objects.size()*1.2));
 
 
-        map.clear();
         String br = Integer.toString(objects.size());
         Toast.makeText(getApplicationContext(),br,Toast.LENGTH_SHORT).show();
+
         for(int i = 0;i<objects.size();i++) {
             Object object = objects.get(i);
             Toast.makeText(getApplicationContext(),"nssssss",Toast.LENGTH_SHORT).show();
@@ -271,6 +237,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             LatLng loc = new LatLng(Double.parseDouble(lat), Double.parseDouble(lon));
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(loc);
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.coins));
             markerOptions.title(object.getName());
             Marker marker = map.addMarker(markerOptions);
             markerPlaceIdMap.put(marker, i);

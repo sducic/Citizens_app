@@ -1,5 +1,6 @@
 package elfak.mosis.zeljko.citzens_app;
 
+
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -29,6 +30,7 @@ public class MyObjectData {
         database = FirebaseDatabase.getInstance().getReference();
         database.child(FIREBASE_CHILD).addChildEventListener(childEventListener);
         database.child(FIREBASE_CHILD).addListenerForSingleValueEvent(parentEventListener);
+
     }
 
     ValueEventListener parentEventListener = new ValueEventListener() {
