@@ -15,12 +15,17 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import androidx.annotation.NonNull;
@@ -44,12 +49,13 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
-
+import java.io.File;
 
 
 public class RegisterActivity extends AppCompatActivity {
@@ -60,6 +66,7 @@ public class RegisterActivity extends AppCompatActivity {
     ProgressBar progressBar;
     ImageView profileImageView;
     private static Bitmap slika = null;
+    public static String profileImageUri="";
 
     String DISPLAY_NAME = null;
     String PROFILE_IMAGE_URL = null;
@@ -133,7 +140,8 @@ public class RegisterActivity extends AppCompatActivity {
                             User user = new User(
                                     fullName,
                                     email,
-                                    phoneNumber
+                                    phoneNumber,
+                                    profileImageUri
                             );
 
                             FirebaseDatabase.getInstance().getReference("Users")
@@ -144,16 +152,21 @@ public class RegisterActivity extends AppCompatActivity {
                                     progressBar.setVisibility(View.GONE);
                                     if (task.isSuccessful()) {
                                         handleUpload();
-                                        Toast.makeText(RegisterActivity.this,"User created",Toast.LENGTH_SHORT).show();
-                                        fAuth.signOut();
-                                        startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                                        Toast.makeText(RegisterActivity.this, "User created", Toast.LENGTH_SHORT).show();
+                                        //fAuth.signOut();
+                                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
                                     } else {
-                                        Toast.makeText(RegisterActivity.this,"Error"+task.getException().getMessage(),Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(RegisterActivity.this, "Error" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                         progressBar.setVisibility(View.GONE);
                                     }
+
                                 }
+
                             });
+
+
                         }
+
                         else
                         {
                             Toast.makeText(RegisterActivity.this,"Error"+task.getException().getMessage(),Toast.LENGTH_SHORT).show();
@@ -188,7 +201,7 @@ public class RegisterActivity extends AppCompatActivity {
                 case RESULT_OK:
                     slika = (Bitmap) data.getExtras().get("data");
                     profileImageView.setImageBitmap(slika);
-                   // handleUpload(bitmap);
+                    //handleUpload();
             }
         }
     }
@@ -207,7 +220,7 @@ public class RegisterActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                       // getDownloadUrl(reference);
+                        getDownloadUrl(reference);
                         Toast.makeText(RegisterActivity.this, " Profile photo updated succesfully", Toast.LENGTH_SHORT).show();
                     }
                 })
@@ -217,22 +230,46 @@ public class RegisterActivity extends AppCompatActivity {
                         Log.e(TAG, "onFailure: ",e.getCause() );
                     }
                 });
+
     }
 
+   /*private void saveUri(String uri)
+    {
+
+            FirebaseDatabase.getInstance().getReference("Users")
+                   .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                   .child("profileImageUri")
+                   .setValue(uri);
+
+        Toast.makeText(RegisterActivity.this, " Save Uri", Toast.LENGTH_SHORT).show();
 
 
-   /* private void getDownloadUrl(StorageReference reference) {
+    }*/
+
+
+
+    private void getDownloadUrl(StorageReference reference) {
         reference.getDownloadUrl()
                 .addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
                         Log.d(TAG, "onSuccess: " + uri);
-                        setUserProfileUrl(uri);
+                        //setUserProfileUrl(uri);
+                        String profImgUri;
+                        profImgUri=uri.toString();
+                        System.out.println("uri");
+                        System.out.println(profImgUri);
+
+                        DatabaseReference baza = FirebaseDatabase.getInstance().getReference();
+                        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                        baza.child("Users").child(userId).child("profileImageUri").setValue(profImgUri);
+
                     }
                 });
     }
 
-    private void setUserProfileUrl(Uri uri) {
+   /* private void setUserProfileUrl(Uri uri) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         UserProfileChangeRequest request = new UserProfileChangeRequest.Builder()
