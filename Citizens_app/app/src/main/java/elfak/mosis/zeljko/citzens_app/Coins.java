@@ -47,7 +47,7 @@ public class Coins extends AppCompatActivity {
         mUsersDatabaseReference= FirebaseDatabase.getInstance().getReference().child("Users");
         mUsersDatabaseReference.keepSynced(true);
 
-        
+
 
     }
 

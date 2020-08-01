@@ -69,18 +69,25 @@ public class Profile extends AppCompatActivity {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        if (user != null) {
-            Log.d(TAG, "onCreate: " + user.getDisplayName());
-            if (user.getPhotoUrl() != null) {
-                Glide.with(this)
-                        .load(user.getPhotoUrl())
-                        .apply(RequestOptions.circleCropTransform())
-                        .into(profileImageView);
-                //Picasso.get().load(user.getPhotoUrl()).into(profileImageView);
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference baza = ref.child("Users").child(userId).child("profileImageUri");
 
+        baza.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String profImgUri = dataSnapshot.getValue(String.class);
+                Uri myUri = Uri.parse(profImgUri);
+
+                Picasso.get().load(myUri).into(profileImageView);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
             }
-        }
+        });
+
 
         btnLog=findViewById(R.id.button_logout);
 
@@ -180,6 +187,16 @@ public class Profile extends AppCompatActivity {
                     public void onSuccess(Uri uri) {
                         Log.d(TAG, "onSuccess: " + uri);
                         setUserProfileUrl(uri);
+
+                        String profImgUri;
+                        profImgUri=uri.toString();
+                        System.out.println("uri");
+                        System.out.println(profImgUri);
+
+                        DatabaseReference baza = FirebaseDatabase.getInstance().getReference();
+                        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                        baza.child("Users").child(userId).child("profileImageUri").setValue(profImgUri);
                     }
                 });
     }
