@@ -24,8 +24,7 @@ public class HomePage extends AppCompatActivity {
         btnMaps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(HomePage.this, Maps.class);
-                intent.putExtra("state",Maps.SELECT_COORDINATES);
+                Intent intent = new Intent(HomePage.this, MapsTrackerActivity.class);
                 startActivityForResult(intent,1);
             }
         });
