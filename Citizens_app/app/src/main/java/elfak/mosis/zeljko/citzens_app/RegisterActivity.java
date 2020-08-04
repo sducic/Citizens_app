@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -153,8 +154,9 @@ public class RegisterActivity extends AppCompatActivity {
                                     if (task.isSuccessful()) {
                                         handleUpload();
                                         Toast.makeText(RegisterActivity.this, "User created", Toast.LENGTH_SHORT).show();
-                                        //fAuth.signOut();
-                                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                       // fAuth.signOut();
+                                        //startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                        //new MyAsyncTask().execute();
                                     } else {
                                         Toast.makeText(RegisterActivity.this, "Error" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                         progressBar.setVisibility(View.GONE);
@@ -182,6 +184,21 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     }
+
+    /*private class MyAsyncTask extends AsyncTask<Void, Void, Void>
+    {
+        @Override
+        protected Void doInBackground(Void... params) {
+            handleUpload();
+            Toast.makeText(RegisterActivity.this, "User created", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void result) {
+            fAuth.signOut();
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        }
+    }*/
 
     //profile photo!
 
@@ -264,6 +281,9 @@ public class RegisterActivity extends AppCompatActivity {
                         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
                         baza.child("Users").child(userId).child("profileImageUri").setValue(profImgUri);
+
+                        fAuth.signOut();
+                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
 
                     }
                 });
