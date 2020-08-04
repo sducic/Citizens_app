@@ -1,6 +1,7 @@
 package elfak.mosis.zeljko.citzens_app;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,12 +13,13 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class HomePage extends AppCompatActivity {
 
-    ImageButton btnMaps, btnFriends, btnCoins, btnProfile;
-    Button btnLog;
+    CardView btnMaps, btnFriends, btnCoins, btnProfile;
+    CardView btnLog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home_page);
+        setContentView(R.layout.activity_home_page2);
 
 
         btnMaps = findViewById(R.id.btnMaps);
@@ -33,7 +35,7 @@ public class HomePage extends AppCompatActivity {
         btnFriends.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(HomePage.this, FindFriends.class);
+                Intent intent = new Intent(HomePage.this, AddFriend.class);
                 startActivity(intent);
             }
         });
@@ -56,9 +58,7 @@ public class HomePage extends AppCompatActivity {
             }
         });
 
-        btnLog=findViewById(R.id.button_logout);
 
-        btnLog.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
@@ -67,6 +67,7 @@ public class HomePage extends AppCompatActivity {
                 finish();
             }
         });
+
 
 
     }
