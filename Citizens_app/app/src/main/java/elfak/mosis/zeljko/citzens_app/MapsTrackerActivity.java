@@ -291,7 +291,7 @@ public class MapsTrackerActivity extends  AppCompatActivity implements OnMapRead
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setMyLocationEnabled(true);
+//        mMap.setMyLocationEnabled(true);
 
 
         // Add a marker in Sydney and move the camera
