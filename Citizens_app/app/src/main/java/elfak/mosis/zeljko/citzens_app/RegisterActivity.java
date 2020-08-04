@@ -63,6 +63,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     Button buttonCreate;
     EditText editTextEmail, editTextFullname, editTextPhone, editTextPassword1, editTextPassword2;
+
     FirebaseAuth fAuth;
     ProgressBar progressBar;
     ImageView profileImageView;
@@ -143,6 +144,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     email,
                                     phoneNumber,
                                     profileImageUri
+
                             );
 
                             FirebaseDatabase.getInstance().getReference("Users")

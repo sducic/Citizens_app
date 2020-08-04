@@ -26,8 +26,8 @@ public class HomePage extends AppCompatActivity {
         btnMaps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(HomePage.this, Maps.class);
-                startActivity(intent);
+                Intent intent = new Intent(HomePage.this, MapsTrackerActivity.class);
+                startActivityForResult(intent,1);
             }
         });
 
@@ -57,6 +57,17 @@ public class HomePage extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
+
+            @Override
+            public void onClick(View view) {
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                finish();
+            }
+        });
+
 
 
     }
