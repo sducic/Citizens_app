@@ -3,6 +3,7 @@ package elfak.mosis.zeljko.citzens_app;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -16,6 +17,7 @@ public class HomePage extends AppCompatActivity {
     CardView btnMaps, btnFriends, btnCoins, btnProfile;
     CardView btnLog;
 
+    @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +62,11 @@ public class HomePage extends AppCompatActivity {
 
 
 
+
+       /* btnLog=findViewById(R.id.button_logout);
+
+        btnLog.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
                 FirebaseAuth.getInstance().signOut();
@@ -67,7 +74,7 @@ public class HomePage extends AppCompatActivity {
                 finish();
             }
         });
-
+*/
 
 
     }
