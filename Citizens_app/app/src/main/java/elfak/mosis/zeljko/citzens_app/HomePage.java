@@ -14,7 +14,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class HomePage extends AppCompatActivity {
 
-    CardView btnMaps, btnFriends, btnCoins, btnProfile,btnNews;
+    CardView btnMaps, btnFriends, btnCoins, btnProfile,btnNews,btnReport;
     CardView btnLog;
 
     @SuppressLint("WrongViewCast")
@@ -69,21 +69,17 @@ public class HomePage extends AppCompatActivity {
             }
         });
 
-
-
-
-       /* btnLog=findViewById(R.id.button_logout);
-
-        btnLog.setOnClickListener(new View.OnClickListener() {
-
+        btnReport = findViewById(R.id.btnReport);
+        btnReport.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(getApplicationContext(),MainActivity.class));
-                finish();
+            public void onClick(View v) {
+                Intent intent = new Intent(HomePage.this, Maps.class);
+                startActivity(intent);
             }
         });
-*/
+
+
+
 
 
     }
