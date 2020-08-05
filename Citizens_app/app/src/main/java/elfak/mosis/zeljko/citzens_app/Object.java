@@ -18,13 +18,14 @@ public class Object {
     public String latitude;
     public String UserID;
     public String date;
+    public String imgUri;
     @Exclude
     public String key;
     public Object(){
 
     }
 
-    public Object(String name, String description, String category, String longitude, String latitude,String UserID,String date)
+    public Object(String name, String description, String category, String longitude, String latitude,String UserID,String date,String imgUri)
     {
         this.name = name;
         this.category = category;
@@ -33,6 +34,7 @@ public class Object {
         this.latitude = latitude;
         this.UserID=UserID;
         this.date=date;
+        this.imgUri=imgUri;
     }
 
     public Object(String name, String description, String category)
@@ -52,5 +54,7 @@ public class Object {
         return name;
     }
     public String getDate(){return date;}
+    public String getKey(){return key;}
+    public String getImgUri(){return imgUri;}
 }
 

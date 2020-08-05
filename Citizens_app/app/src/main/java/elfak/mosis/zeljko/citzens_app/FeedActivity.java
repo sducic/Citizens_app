@@ -1,7 +1,9 @@
 package elfak.mosis.zeljko.citzens_app;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Picasso;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 //import com.squareup.picasso.Picasso;
 
 
@@ -50,6 +55,11 @@ public class FeedActivity extends AppCompatActivity {
             protected void populateViewHolder(UserViewHolder viewHolder, Object object, int position) {
                 viewHolder.setName(object.getName());
                 viewHolder.setDate(object.getDate());
+
+                String imgUri=object.getImgUri();
+                Uri myUri = Uri.parse(imgUri);
+                viewHolder.setImage(myUri);
+
                // viewHolder.setEmail(users.getEmail());
                 //viewHolder.setImage(users.getThumbImage(),getApplicationContext());
                 //final String user_id=getRef(position).getKey();
@@ -84,6 +94,12 @@ public class FeedActivity extends AppCompatActivity {
         public void setDate(String email) {
             TextView userStatusView=(TextView)mView.findViewById(R.id.date);
             userStatusView.setText(email);
+        }
+
+        public void setImage(Uri pom) {
+
+            ImageView userImageView = (ImageView) mView.findViewById(R.id.photo);
+            Picasso.get().load(pom).into(userImageView);
         }
 
        /* public void setImage(String thumb_image,Context ctx) {
