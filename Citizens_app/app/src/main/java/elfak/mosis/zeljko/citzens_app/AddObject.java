@@ -20,6 +20,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ThrowOnExtraProperties;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class AddObject extends AppCompatActivity implements View.OnClickListener {
 
 
@@ -123,8 +127,12 @@ public class AddObject extends AppCompatActivity implements View.OnClickListener
                 final String categ = category.getText().toString();
                 final String lon = longitude.getText().toString();
                 final String lat = latitude.getText().toString();
+                final String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                Date date = new Date();
+                String strDate = dateFormat.format(date).toString();
 
-                Object object = new Object(nme, desc, categ, lat, lon);
+                Object object = new Object(nme, desc, categ, lat, lon,userID,strDate);
                 MyObjectData.getInstance().addNewPlace(object);
                 Toast.makeText(getApplicationContext(), "Added object.", Toast.LENGTH_SHORT).show();
 
