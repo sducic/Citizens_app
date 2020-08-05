@@ -1,7 +1,9 @@
 package elfak.mosis.zeljko.citzens_app;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Picasso;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 //import com.squareup.picasso.Picasso;
 
 
@@ -28,7 +33,7 @@ public class FeedActivity extends AppCompatActivity {
         mUsersList.setHasFixedSize(true);
         mUsersList.setLayoutManager(new LinearLayoutManager(this));
 
-        mUsersDatabaseReference= FirebaseDatabase.getInstance().getReference().child("Users");
+        mUsersDatabaseReference= FirebaseDatabase.getInstance().getReference().child("my-objects");
         mUsersDatabaseReference.keepSynced(true);
 
     }
@@ -40,15 +45,21 @@ public class FeedActivity extends AppCompatActivity {
         //mUsersDatabaseReference.child(uid).child("online").setValue("true");
 
         //-------FIREBASE RECYCLE VIEW ADAPTER-------
-        FirebaseRecyclerAdapter<User , UserViewHolder> firebaseRecyclerAdapter=new FirebaseRecyclerAdapter<User, UserViewHolder>(
-                User.class,
+        FirebaseRecyclerAdapter<Object , UserViewHolder> firebaseRecyclerAdapter=new FirebaseRecyclerAdapter<Object, UserViewHolder>(
+                Object.class,
                 R.layout.post_card,
                 UserViewHolder.class,
                 mUsersDatabaseReference
         ) {
             @Override
-            protected void populateViewHolder(UserViewHolder viewHolder, User users, int position) {
-                //viewHolder.setName(users.getfullName());
+            protected void populateViewHolder(UserViewHolder viewHolder, Object object, int position) {
+                viewHolder.setName(object.getName());
+                viewHolder.setDate(object.getDate());
+
+                String imgUri=object.getImgUri();
+                Uri myUri = Uri.parse(imgUri);
+                viewHolder.setImage(myUri);
+
                // viewHolder.setEmail(users.getEmail());
                 //viewHolder.setImage(users.getThumbImage(),getApplicationContext());
                 //final String user_id=getRef(position).getKey();
@@ -75,14 +86,20 @@ public class FeedActivity extends AppCompatActivity {
         }
 
         public void setName(String name) {
-            TextView userNameView=(TextView)mView.findViewById(R.id.textViewSingleListName);
+            TextView userNameView=(TextView)mView.findViewById(R.id.name);
             userNameView.setText(name);
         }
 
 
-        public void setEmail(String email) {
-            TextView userStatusView=(TextView)mView.findViewById(R.id.textViewSingleListStatus);
+        public void setDate(String email) {
+            TextView userStatusView=(TextView)mView.findViewById(R.id.date);
             userStatusView.setText(email);
+        }
+
+        public void setImage(Uri pom) {
+
+            ImageView userImageView = (ImageView) mView.findViewById(R.id.photo);
+            Picasso.get().load(pom).into(userImageView);
         }
 
        /* public void setImage(String thumb_image,Context ctx) {

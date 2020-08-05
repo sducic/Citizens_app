@@ -48,10 +48,7 @@
             android:label="@string/title_activity_maps_tracker"></activity>
         <activity android:name=".AddObject" />
         
-      
-       
-      
-        <activity android:name=".Friends" />
+
 
         <activity android:name=".AddFriend"></activity>
         <activity android:name=".Profile" />
