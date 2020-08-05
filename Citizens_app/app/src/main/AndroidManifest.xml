@@ -23,6 +23,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".AddFriend"></activity>
         <activity android:name=".Profile" />
+        <activity android:name=".FeedActivity" />
         <activity android:name=".Coins" />
         <activity android:name=".RegisterActivity" />
         <activity android:name=".AllUsers" />
