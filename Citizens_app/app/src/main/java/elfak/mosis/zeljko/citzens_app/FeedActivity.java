@@ -1,12 +1,15 @@
 package elfak.mosis.zeljko.citzens_app;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,6 +26,7 @@ public class FeedActivity extends AppCompatActivity {
 
     private RecyclerView mUsersList;
     private DatabaseReference mUsersDatabaseReference;
+    //public static String object_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,19 +64,17 @@ public class FeedActivity extends AppCompatActivity {
                 Uri myUri = Uri.parse(imgUri);
                 viewHolder.setImage(myUri);
 
-               // viewHolder.setEmail(users.getEmail());
-                //viewHolder.setImage(users.getThumbImage(),getApplicationContext());
-                //final String user_id=getRef(position).getKey();
 
-               /* viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                final String object_id=getRef(position).getKey();
+
+                viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
-                        Intent profileIntent=new Intent(Friends.this,Profile.class);
-                        profileIntent.putExtra("user_id",user_id);
-                        startActivity(profileIntent);
+                        Intent showObject=new Intent(FeedActivity.this,ShowObject.class);
+                        showObject.putExtra("object_id",object_id);
+                        startActivity(showObject);
                     }
-                });*/
+                });
             }
         };
         mUsersList.setAdapter(firebaseRecyclerAdapter);
@@ -102,11 +104,15 @@ public class FeedActivity extends AppCompatActivity {
             Picasso.get().load(pom).into(userImageView);
         }
 
-       /* public void setImage(String thumb_image,Context ctx) {
-            CircleImageView userImageView = (CircleImageView)mView.findViewById(R.id.circleImageViewUserImage);
-            //Log.e("thumb URL is--- ",thumb_image);
-            Picasso.with(ctx).load(thumb_image).placeholder(R.drawable.user_img).into(userImageView);
-        }*/
+       /* CardView card_view = (CardView) findViewById(R.id.card_view); // creating a CardView and assigning a value.
+
+        card_view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // do whatever you want to do on click (to launch any fragment or activity you need to put intent here.)
+            }
+        });*/
+
     }
 
     @Override

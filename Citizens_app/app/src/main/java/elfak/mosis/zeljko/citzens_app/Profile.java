@@ -60,6 +60,7 @@ public class Profile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile2);
 
+
         fAuth=FirebaseAuth.getInstance();
         profileImageView = findViewById(R.id.profile_image);
         email=findViewById(R.id.txt_email);
