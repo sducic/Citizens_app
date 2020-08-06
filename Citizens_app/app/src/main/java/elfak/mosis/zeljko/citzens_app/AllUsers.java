@@ -1,5 +1,6 @@
 package elfak.mosis.zeljko.citzens_app;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -11,6 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Picasso;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 //import com.squareup.picasso.Picasso;
 
 
@@ -50,18 +54,14 @@ public class AllUsers extends AppCompatActivity {
             protected void populateViewHolder(UserViewHolder viewHolder, User users, int position) {
                 viewHolder.setName(users.getfullName());
                 viewHolder.setEmail(users.getEmail());
-                //viewHolder.setImage(users.getThumbImage(),getApplicationContext());
-                //final String user_id=getRef(position).getKey();
 
-               /* viewHolder.mView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                String imgUri=users.getProfileImageUri();
+                Uri myUri = Uri.parse(imgUri);
 
-                        Intent profileIntent=new Intent(Friends.this,Profile.class);
-                        profileIntent.putExtra("user_id",user_id);
-                        startActivity(profileIntent);
-                    }
-                });*/
+                viewHolder.setImage(myUri);
+
+
+
             }
         };
         mUsersList.setAdapter(firebaseRecyclerAdapter);
@@ -85,11 +85,11 @@ public class AllUsers extends AppCompatActivity {
             userStatusView.setText(email);
         }
 
-       /* public void setImage(String thumb_image,Context ctx) {
-            CircleImageView userImageView = (CircleImageView)mView.findViewById(R.id.circleImageViewUserImage);
-            //Log.e("thumb URL is--- ",thumb_image);
-            Picasso.with(ctx).load(thumb_image).placeholder(R.drawable.user_img).into(userImageView);
-        }*/
+        public void setImage(Uri pom) {
+
+            CircleImageView userImageView = (CircleImageView) mView.findViewById(R.id.circleImageViewUserImage);
+            Picasso.get().load(pom).into(userImageView);
+        }
     }
 
     @Override
