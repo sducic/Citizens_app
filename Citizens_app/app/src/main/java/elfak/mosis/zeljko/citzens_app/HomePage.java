@@ -69,6 +69,7 @@ public class HomePage extends AppCompatActivity {
             }
         });
 
+
         btnReport = findViewById(R.id.btnReport);
         btnReport.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,8 +78,6 @@ public class HomePage extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-
 
 
 

@@ -107,15 +107,11 @@ public class MapsTrackerActivity extends  AppCompatActivity implements OnMapRead
 
         reference = FirebaseDatabase.getInstance().getReference().child("User-Location");
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-     //  SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-       //       .findFragmentById(R.id.map);
-      // mapFragment.getMapAsync(this);
+
 
 
         getLocationUpdates();
-        
-        readChanges();
+
 
 
         usersLoc = new ArrayList<>();
@@ -172,38 +168,7 @@ public class MapsTrackerActivity extends  AppCompatActivity implements OnMapRead
 
 
 
-              /*  latitude.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                        lat = dataSnapshot.getValue(double.class);
-                        String lat1 = String.valueOf(lat);
-                        Toast.makeText(getApplicationContext(),lat1, Toast.LENGTH_SHORT).show();
-
-
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-
-                longitude.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        lon  = dataSnapshot.getValue(double.class);
-                        String lon1 = String.valueOf(lon);
-
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });*/
 
                 LatLng latLng = new LatLng(lat,lon);
 
@@ -225,30 +190,7 @@ public class MapsTrackerActivity extends  AppCompatActivity implements OnMapRead
     }
 
 
-    private void readChanges() {
-       /* dbs.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-                    try {
-                      double location = dataSnapshot.getValue(double.class);
-                        if (location != 0) {
-                            myMarker.setPosition(new LatLng(location.getLatitude(),location.getLongitude()));
 
-                        }
-                    }catch(Exception e)
-                    {
-                        Toast.makeText(MapsTrackerActivity.this,e.getMessage(),Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });*/
-    }
 
     private void getLocationUpdates() {
         if(manager != null) {

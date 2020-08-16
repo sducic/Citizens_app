@@ -43,7 +43,16 @@
             android:name=".MapsTrackerActivity"
             android:label="@string/title_activity_maps_tracker" />
         <activity android:name=".AddObject" />
+
+      
+       
+      
+        <activity android:name=".Friends" />
+
+      
+
         <activity android:name=".AddFriend" />
+
         <activity android:name=".Profile" />
         <activity android:name=".FeedActivity" />
         <activity android:name=".Coins" />
