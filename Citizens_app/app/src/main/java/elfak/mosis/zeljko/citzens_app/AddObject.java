@@ -171,7 +171,10 @@ public class AddObject extends AppCompatActivity implements View.OnClickListener
                 String strDate = dateFormat.format(date).toString();
                 String imgUri="";
 
-                Object object = new Object(nme, desc, kategorija, lat, lon,userID,strDate,imgUri);
+                double lon1 = Double.parseDouble(lon);
+                double lat1 = Double.parseDouble(lat);
+
+                Object object = new Object(nme, desc, kategorija, lon1, lat1,userID,strDate,imgUri);
                 MyObjectData.getInstance().addNewPlace(object);
                 objectKey=object.getKey();
                 handleUpload();//upload image

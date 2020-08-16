@@ -37,9 +37,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -55,6 +58,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     Location currentLocation;
     FusedLocationProviderClient client;
 
+    double lon,lat;
 
     Button addObject;
     private boolean selCoorsEnabled = false;
@@ -101,6 +105,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
             //call method
             getCurrentLocation();
+            getProblemsLocations();
             setOnMapClickListener();
         } else {
             //when permission denied
@@ -167,6 +172,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
 
 
+
     }
 
     private void getCurrentLocation() {
@@ -185,7 +191,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
                             //create marker
-                            MarkerOptions options = new MarkerOptions().position(latLng).title("I am there");
+                            MarkerOptions options = new MarkerOptions().position(latLng).title("Your location");
                             //zoom
                             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
                             googleMap.addMarker(options);
@@ -203,7 +209,6 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
 
         map = googleMap;
-        addObjectMarkers();
 
     }
 
@@ -219,34 +224,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     }
 
 
-    private HashMap<Marker, Integer> markerPlaceIdMap;
-    private void addObjectMarkers()
-    {
-        ArrayList<Object> objects = MyObjectData.getInstance().getMyObjects();
-        markerPlaceIdMap = new HashMap<Marker,Integer>((int)((double)objects.size()*1.2));
 
-
-        String br = Integer.toString(objects.size());
-        Toast.makeText(getApplicationContext(),br,Toast.LENGTH_SHORT).show();
-
-        for(int i = 0;i<objects.size();i++) {
-            Object object = objects.get(i);
-            Toast.makeText(getApplicationContext(),"nssssss",Toast.LENGTH_SHORT).show();
-             String lat = object.getLatitude();
-             String lon = object.getLongitude();
-            LatLng loc = new LatLng(Double.parseDouble(lat), Double.parseDouble(lon));
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(loc);
-            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.coins));
-            markerOptions.title(object.getName());
-            Marker marker = map.addMarker(markerOptions);
-            markerPlaceIdMap.put(marker, i);
-
-
-
-        }
-
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -255,7 +233,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         try{
             if(resultCode == Activity.RESULT_OK)
             {
-                addObjectMarkers();
+               // addObjectMarkers();
             }
         }catch(Exception e)
         {
@@ -307,4 +285,30 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     ////////////////////////////////////////////////////////////////////////
 
 
+
+    private void getProblemsLocations() {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("my-objects");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                    lat = snapshot.child("latitude").getValue(double.class);
+                    lon = snapshot.child("longitude").getValue(double.class);
+
+                    String description = snapshot.child("description").getValue(String.class);
+                    LatLng latLng = new LatLng(lat,lon);
+
+                    MarkerOptions options = new MarkerOptions().position(latLng).title(description);
+
+                    map.addMarker(options);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
 }

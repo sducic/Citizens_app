@@ -137,7 +137,7 @@ public class MyObjectData {
         recreateKeyIndexMapping();
     }
 
-    public void updateObject(int index, String nme, String desc, String categ,String lng, String lat)
+    public void updateObject(int index, String nme, String desc, String categ,double lng, double lat)
     {
         Object object = myObjects.get(index);
         object.name = nme;

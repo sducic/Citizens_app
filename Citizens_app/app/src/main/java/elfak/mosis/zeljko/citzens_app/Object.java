@@ -14,8 +14,8 @@ public class Object {
     public String name;
     public String category;
     public String description;
-    public String longitude;
-    public String latitude;
+    public double longitude;
+    public double latitude;
     public String UserID;
     public String date;
     public String imgUri;
@@ -25,7 +25,7 @@ public class Object {
 
     }
 
-    public Object(String name, String description, String category, String longitude, String latitude,String UserID,String date,String imgUri)
+    public Object(String name, String description, String category, double longitude, double latitude,String UserID,String date,String imgUri)
     {
         this.name = name;
         this.category = category;
@@ -44,10 +44,10 @@ public class Object {
         this.category = category;
     }
 
-    public String getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
-    public String getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
     public String getName(){
