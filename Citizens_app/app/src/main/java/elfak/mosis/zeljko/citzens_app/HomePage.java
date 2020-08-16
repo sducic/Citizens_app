@@ -3,6 +3,7 @@ package elfak.mosis.zeljko.citzens_app;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -13,9 +14,10 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class HomePage extends AppCompatActivity {
 
-    CardView btnMaps, btnFriends, btnCoins, btnProfile;
+    CardView btnMaps, btnFriends, btnCoins, btnProfile,btnNews,btnReport;
     CardView btnLog;
 
+    @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,15 +60,25 @@ public class HomePage extends AppCompatActivity {
             }
         });
 
-
-
+        btnNews = findViewById(R.id.btnNews);
+        btnNews.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(getApplicationContext(),MainActivity.class));
-                finish();
+            public void onClick(View v) {
+                Intent intent = new Intent(HomePage.this, FeedActivity.class);
+                startActivity(intent);
             }
         });
+
+        btnReport = findViewById(R.id.btnReport);
+        btnReport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomePage.this, Maps.class);
+                startActivity(intent);
+            }
+        });
+
+
 
 
 

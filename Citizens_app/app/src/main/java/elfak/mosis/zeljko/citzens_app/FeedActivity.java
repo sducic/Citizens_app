@@ -1,11 +1,15 @@
 package elfak.mosis.zeljko.citzens_app;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,21 +22,22 @@ import de.hdodenhof.circleimageview.CircleImageView;
 //import com.squareup.picasso.Picasso;
 
 
-public class AllUsers extends AppCompatActivity {
+public class FeedActivity extends AppCompatActivity {
 
     private RecyclerView mUsersList;
     private DatabaseReference mUsersDatabaseReference;
+    //public static String object_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_all_users);
+        setContentView(R.layout.activity_feed);
 
-        mUsersList=(RecyclerView)findViewById(R.id.recyclerViewUsersList);
+        mUsersList=(RecyclerView)findViewById(R.id.recycleViewPost);
         mUsersList.setHasFixedSize(true);
         mUsersList.setLayoutManager(new LinearLayoutManager(this));
 
-        mUsersDatabaseReference= FirebaseDatabase.getInstance().getReference().child("Users");
+        mUsersDatabaseReference= FirebaseDatabase.getInstance().getReference().child("my-objects");
         mUsersDatabaseReference.keepSynced(true);
 
     }
@@ -44,24 +49,32 @@ public class AllUsers extends AppCompatActivity {
         //mUsersDatabaseReference.child(uid).child("online").setValue("true");
 
         //-------FIREBASE RECYCLE VIEW ADAPTER-------
-        FirebaseRecyclerAdapter<User , UserViewHolder> firebaseRecyclerAdapter=new FirebaseRecyclerAdapter<User, UserViewHolder>(
-                User.class,
-                R.layout.recycle_list_single_user,
+        FirebaseRecyclerAdapter<Object , UserViewHolder> firebaseRecyclerAdapter=new FirebaseRecyclerAdapter<Object, UserViewHolder>(
+                Object.class,
+                R.layout.post_card,
                 UserViewHolder.class,
                 mUsersDatabaseReference
         ) {
             @Override
-            protected void populateViewHolder(UserViewHolder viewHolder, User users, int position) {
-                viewHolder.setName(users.getfullName());
-                viewHolder.setEmail(users.getEmail());
+            protected void populateViewHolder(UserViewHolder viewHolder, Object object, int position) {
+                viewHolder.setName(object.getName());
+                viewHolder.setDate(object.getDate());
 
-                String imgUri=users.getProfileImageUri();
+                String imgUri=object.getImgUri();
                 Uri myUri = Uri.parse(imgUri);
-
                 viewHolder.setImage(myUri);
 
 
+                final String object_id=getRef(position).getKey();
 
+                viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent showObject=new Intent(FeedActivity.this,ShowObject.class);
+                        showObject.putExtra("object_id",object_id);
+                        startActivity(showObject);
+                    }
+                });
             }
         };
         mUsersList.setAdapter(firebaseRecyclerAdapter);
@@ -75,21 +88,31 @@ public class AllUsers extends AppCompatActivity {
         }
 
         public void setName(String name) {
-            TextView userNameView=(TextView)mView.findViewById(R.id.textViewSingleListName);
+            TextView userNameView=(TextView)mView.findViewById(R.id.name);
             userNameView.setText(name);
         }
 
 
-        public void setEmail(String email) {
-            TextView userStatusView=(TextView)mView.findViewById(R.id.textViewSingleListStatus);
+        public void setDate(String email) {
+            TextView userStatusView=(TextView)mView.findViewById(R.id.date);
             userStatusView.setText(email);
         }
 
         public void setImage(Uri pom) {
 
-            CircleImageView userImageView = (CircleImageView) mView.findViewById(R.id.circleImageViewUserImage);
+            ImageView userImageView = (ImageView) mView.findViewById(R.id.photo);
             Picasso.get().load(pom).into(userImageView);
         }
+
+       /* CardView card_view = (CardView) findViewById(R.id.card_view); // creating a CardView and assigning a value.
+
+        card_view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // do whatever you want to do on click (to launch any fragment or activity you need to put intent here.)
+            }
+        });*/
+
     }
 
     @Override
