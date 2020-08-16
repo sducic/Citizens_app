@@ -60,13 +60,7 @@ public class HomePage extends AppCompatActivity {
 
 
 
-            @Override
-            public void onClick(View view) {
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(getApplicationContext(),MainActivity.class));
-                finish();
-            }
-        });
+
 
 
 

@@ -52,7 +52,6 @@
        
       
         <activity android:name=".Friends" />
-        <activity android:name=".FindFriends" />
 
         <activity android:name=".AddFriend"></activity>
         <activity android:name=".Profile" />
