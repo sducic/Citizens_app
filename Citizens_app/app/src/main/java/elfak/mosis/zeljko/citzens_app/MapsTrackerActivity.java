@@ -6,20 +6,33 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -38,7 +51,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapsTrackerActivity extends  AppCompatActivity implements OnMapReadyCallback, LocationListener {
+public class MapsTrackerActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener {
 
     private GoogleMap mMap;
     Location currentLocation;
@@ -46,46 +59,65 @@ public class MapsTrackerActivity extends  AppCompatActivity implements OnMapRead
     FusedLocationProviderClient client;
 
 
-    private DatabaseReference reference;
+     DatabaseReference reference;
     private DatabaseReference latitude;
     private DatabaseReference longitude;
+
     private LocationManager manager;
 
     ArrayList<UserLocation> usersLoc;
     ArrayAdapter<UserLocation> adapter;
     UserLocation user;
 
+    User user1;
+    String imgUri;
 
 
     private final int MIN_TIME = 1000; // 1 second
     private final int MIN_DISTANCE = 1; // 1 meter
 
-    double lon,lat;
+    double lon, lat;
+    String nameForMarker;
+    String image;
 
 
     Marker myMarker;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps_tracker);
 
+        setContentView(R.layout.activity_maps_tracker);
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         String uid = currentUser.getUid();
-        final ArrayList<User> lista = new ArrayList<>();
+
+        //final ArrayList<User> lista = new ArrayList<>();
 
         latitude = FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("latitude");
         longitude = FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("longitude");
 
+        reference = FirebaseDatabase.getInstance().getReference().child("Users");
 
-
-
-        mapFragment = (SupportMapFragment)getSupportFragmentManager()
+        mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-//initialize fused loc
+
+    //   manager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+
+        //reference = FirebaseDatabase.getInstance().getReference().child("User-Location");
+
+
+        getLocationUpdates();
+
+      //  usersLoc = new ArrayList<>();
+        //user = new UserLocation();
+
+
+        //initialize fused loc
         client = LocationServices.getFusedLocationProviderClient(this);
-        if(ActivityCompat.checkSelfPermission(MapsTrackerActivity.this,
+        if (ActivityCompat.checkSelfPermission(MapsTrackerActivity.this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
             //call method
@@ -99,28 +131,27 @@ public class MapsTrackerActivity extends  AppCompatActivity implements OnMapRead
             ActivityCompat.requestPermissions(MapsTrackerActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
 
         }
-
-
-        manager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
-
-
-        reference = FirebaseDatabase.getInstance().getReference().child("User-Location");
-
-
-
-
-        getLocationUpdates();
-
-
-
-        usersLoc = new ArrayList<>();
-        user = new UserLocation();
-        }
+    }
 
     private void getCurrentLocation() {
-        //initialize task locati
+        //initialize task locat
+
+
+
         Task<Location> task = client.getLastLocation();
+        task.addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
+                latitude.setValue(location.getLatitude());
+                longitude.setValue(location.getLongitude());
+
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
+
+            }
+        });
+
+        /*   Task<Location> task = client.getLastLocation();
         task.addOnSuccessListener(new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(final Location location) {
@@ -135,16 +166,19 @@ public class MapsTrackerActivity extends  AppCompatActivity implements OnMapRead
                             longitude.setValue(location.getLongitude());
 
                             //create marker
-                            MarkerOptions options = new MarkerOptions().position(latLng).title("I am there");
+                         //   MarkerOptions options = new MarkerOptions().position(latLng).title("I am there");
+                          //  googleMap.addMarker(options);
                             //zoom
                             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
-                            googleMap.addMarker(options);
+                          //  googleMap.addMarker(options);
 
                         }
                     });
                 }
             }
-        });
+        });*/
+
+
 
     }
 
@@ -162,19 +196,14 @@ public class MapsTrackerActivity extends  AppCompatActivity implements OnMapRead
                  //   Toast.makeText(getApplicationContext(),String.valueOf(lat), Toast.LENGTH_SHORT).show();
                       lat = snapshot.child("latitude").getValue(double.class);
                      lon = snapshot.child("longitude").getValue(double.class);
-
-
-
-
-
-
-
+                     image = snapshot.child("profileImageUri").getValue(String.class);
+                     nameForMarker = snapshot.child("fullName").getValue(String.class);
 
                 LatLng latLng = new LatLng(lat,lon);
 
-                MarkerOptions options = new MarkerOptions().position(latLng).title("Second");
+                MarkerOptions options = new MarkerOptions().position(latLng).title(nameForMarker);
                   //  mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
-                    mMap.addMarker(options);
+                   mMap.addMarker(options);
 
 
 
@@ -213,12 +242,12 @@ public class MapsTrackerActivity extends  AppCompatActivity implements OnMapRead
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
-        if(requestCode == 44){
+       /* if(requestCode == 44){
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getCurrentLocation();
+             //   getCurrentLocation();
                 getCurrentLocUsers();
             }
-        }
+        }*/
     }
 
     /**
@@ -233,26 +262,13 @@ public class MapsTrackerActivity extends  AppCompatActivity implements OnMapRead
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-//        mMap.setMyLocationEnabled(true);
-
-
-        // Add a marker in Sydney and move the camera
-
-
-       // myMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Marker in Sydney"));
-    //    mMap.setMinZoomPreference(12);
-     //   mMap.getUiSettings().setZoomControlsEnabled(true);
-     //   mMap.getUiSettings().setAllGesturesEnabled(true);
-     //   mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
     }
 
     @Override
     public void onLocationChanged(Location location) {
         if(location != null)
         {
-
             saveLocation(location);
-
         } else {
             Toast.makeText(this,"No location.",Toast.LENGTH_SHORT).show();
         }
@@ -261,7 +277,15 @@ public class MapsTrackerActivity extends  AppCompatActivity implements OnMapRead
     private void saveLocation(Location location) {
         latitude.setValue(location.getLatitude());
         longitude.setValue(location.getLongitude());
+    }
 
+    @Override
+    public void onBackPressed() {
+        mMap.clear();
+
+        Toast.makeText(getApplicationContext(),"Gotovo",Toast.LENGTH_SHORT).show();
+        finish();
+        return;
     }
 
     @Override
