@@ -30,6 +30,7 @@ public class HomePage extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(HomePage.this, MapsTrackerActivity.class);
                 startActivityForResult(intent,1);
+
             }
         });
 

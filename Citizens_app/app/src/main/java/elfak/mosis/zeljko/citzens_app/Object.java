@@ -56,5 +56,6 @@ public class Object {
     public String getDate(){return date;}
     public String getKey(){return key;}
     public String getImgUri(){return imgUri;}
+    public String getCategory(){return category;}
 }
 
