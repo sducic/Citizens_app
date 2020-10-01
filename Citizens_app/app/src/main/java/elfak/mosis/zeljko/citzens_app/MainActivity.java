@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(getApplicationContext(),HomePage.class));          //ako je korisnik vec ulogovan
             finish();
         }
+
+        FirebaseMessaging.getInstance().subscribeToTopic("event"); //in java code
 
         buttonRegister.setOnClickListener(new View.OnClickListener() {
             @Override
