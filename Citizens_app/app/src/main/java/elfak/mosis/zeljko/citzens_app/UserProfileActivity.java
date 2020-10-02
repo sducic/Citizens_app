@@ -142,6 +142,22 @@ public class UserProfileActivity extends AppCompatActivity {
             }
         });
 
+
+        mFriendDatabase.child(mCurrent_user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.hasChild(usid)) {
+                    mCurrent_state = "not_friends";
+                    mSendRequestBtn.setText("Send friend request");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
         mSendRequestBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -274,6 +290,7 @@ public class UserProfileActivity extends AppCompatActivity {
                                                     public void onComplete(@NonNull Task<Void> task) {
                                                         if(task.isSuccessful()) {
                                                             Toast.makeText(UserProfileActivity.this, "Friend request declined", Toast.LENGTH_SHORT).show();
+                                                            mCurrent_state="not_friends";
                                                         }
                                                     }
                                                 });
