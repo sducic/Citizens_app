@@ -1,8 +1,12 @@
 package elfak.mosis.zeljko.citzens_app;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -21,6 +26,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class AllUsers extends AppCompatActivity {
 
     private RecyclerView mUsersList;
+    private EditText mSearch;
     private DatabaseReference mUsersDatabaseReference;
 
     @Override
@@ -29,11 +35,30 @@ public class AllUsers extends AppCompatActivity {
         setContentView(R.layout.activity_all_users);
 
         mUsersList=(RecyclerView)findViewById(R.id.recyclerViewUsersList);
+        mSearch = (EditText)findViewById(R.id.search_et);
         mUsersList.setHasFixedSize(true);
         mUsersList.setLayoutManager(new LinearLayoutManager(this));
 
         mUsersDatabaseReference= FirebaseDatabase.getInstance().getReference().child("Users");
         mUsersDatabaseReference.keepSynced(true);
+
+        mSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    String text = mSearch.getText().toString();
+                    firebaseSearch(text);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
     }
 
@@ -43,12 +68,18 @@ public class AllUsers extends AppCompatActivity {
         //String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         //mUsersDatabaseReference.child(uid).child("online").setValue("true");
 
-        //-------FIREBASE RECYCLE VIEW ADAPTER-------
+        firebaseSearch("");
+
+    }
+
+    private void firebaseSearch(String searchText)
+    {
+        Query firebaseSearchQuery = mUsersDatabaseReference.orderByChild("fullName").startAt(searchText).endAt(searchText + "\uf8ff");
         FirebaseRecyclerAdapter<User , UserViewHolder> firebaseRecyclerAdapter=new FirebaseRecyclerAdapter<User, UserViewHolder>(
                 User.class,
                 R.layout.recycle_list_single_user,
                 UserViewHolder.class,
-                mUsersDatabaseReference
+                firebaseSearchQuery
         ) {
             @Override
             protected void populateViewHolder(UserViewHolder viewHolder, User users, int position) {
@@ -59,6 +90,17 @@ public class AllUsers extends AppCompatActivity {
                 Uri myUri = Uri.parse(imgUri);
 
                 viewHolder.setImage(myUri);
+
+                final String user_id = getRef(position).getKey();
+
+                viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent profileIntent = new Intent(AllUsers.this, UserProfileActivity.class);
+                        profileIntent.putExtra("user_id", user_id);
+                        startActivity(profileIntent);
+                    }
+                });
 
 
 

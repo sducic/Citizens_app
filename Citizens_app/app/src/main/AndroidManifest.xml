@@ -26,7 +26,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ShowObject"></activity>
+        <activity android:name=".UserProfileActivity"></activity>
+        <activity android:name=".ShowObject" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -43,16 +44,8 @@
             android:name=".MapsTrackerActivity"
             android:label="@string/title_activity_maps_tracker" />
         <activity android:name=".AddObject" />
-
-      
-       
-      
         <activity android:name=".Friends" />
-
-      
-
         <activity android:name=".AddFriend" />
-
         <activity android:name=".Profile" />
         <activity android:name=".FeedActivity" />
         <activity android:name=".Coins" />
