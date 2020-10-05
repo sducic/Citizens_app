@@ -54,6 +54,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     GoogleMap map;
     SupportMapFragment mapFragment;
     SearchView searchView;
+    Marker mLocationMarker;
 
     Location currentLocation;
     FusedLocationProviderClient client;

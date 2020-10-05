@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "491543432504-00t5tbj7ohr1omqu8ci2fo0eskgrsf7f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "elfak.mosis.zeljko.citzens_app",
+            "certificate_hash": "7e3c662e23ea6d3d38fa311c86daf5b61da82967"
+          }
+        },
+        {
           "client_id": "491543432504-chmrcq9u51ra55bikkkgrtclej8k2c6c.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

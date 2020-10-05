@@ -57,7 +57,7 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
     Location currentLocation;
     SupportMapFragment mapFragment;
     FusedLocationProviderClient client;
-
+    private ArrayList<Marker> markerList = new ArrayList<Marker>();
 
      DatabaseReference reference;
     private DatabaseReference latitude;
@@ -196,6 +196,13 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                for(Marker mark : markerList) {
+                    mark.remove();
+                }
+
+                markerList.clear();
+
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
 
                  //   Toast.makeText(getApplicationContext(),String.valueOf(lat), Toast.LENGTH_SHORT).show();
@@ -208,9 +215,7 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
 
                 MarkerOptions options = new MarkerOptions().position(latLng).title(nameForMarker);
                   //  mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
-                   mMap.addMarker(options);
-
-
+                   markerList.add(mMap.addMarker(options));
 
                 }
             }
@@ -250,7 +255,7 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 44) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getCurrentLocation();
+                //getCurrentLocation();
                 getCurrentLocUsers();
             }
         }
@@ -275,6 +280,7 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
         if(location != null)
         {
             saveLocation(location);
+
         } else {
             Toast.makeText(this,"No location.",Toast.LENGTH_SHORT).show();
         }
