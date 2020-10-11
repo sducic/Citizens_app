@@ -57,6 +57,7 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
     Location currentLocation;
     SupportMapFragment mapFragment;
     FusedLocationProviderClient client;
+    ArrayList<Marker> markerList = new ArrayList<Marker>();
 
 
      DatabaseReference reference;
@@ -64,6 +65,7 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
     private DatabaseReference longitude;
 
     private LocationManager manager;
+    private FirebaseUser currentUser;
 
     ArrayList<UserLocation> usersLoc;
     ArrayAdapter<UserLocation> adapter;
@@ -89,7 +91,7 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
         setContentView(R.layout.activity_maps_tracker);
 
 
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
         String uid = currentUser.getUid();
         final ArrayList<User> lista = new ArrayList<>();
 
@@ -174,7 +176,7 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
                             MarkerOptions options = new MarkerOptions().position(latLng).title("I am there");
                            // googleMap.addMarker(options);
                             //zoom
-                            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
+                            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,20));
                             googleMap.addMarker(options);
 
                         }
@@ -191,28 +193,32 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
      private void getCurrentLocUsers(){
 
 
-
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Users");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                removeMarkers();
+
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
 
-                 //   Toast.makeText(getApplicationContext(),String.valueOf(lat), Toast.LENGTH_SHORT).show();
-                      lat = snapshot.child("latitude").getValue(double.class);
-                     lon = snapshot.child("longitude").getValue(double.class);
-                    // image = snapshot.child("profileImageUri").getValue(String.class);
-                     nameForMarker = snapshot.child("fullName").getValue(String.class);
+                    if(!snapshot.getKey().equals(currentUser.getUid())) {
 
-                LatLng latLng = new LatLng(lat,lon);
+                        //   Toast.makeText(getApplicationContext(),String.valueOf(lat), Toast.LENGTH_SHORT).show();
+                        lat = snapshot.child("latitude").getValue(double.class);
+                        lon = snapshot.child("longitude").getValue(double.class);
+                        // image = snapshot.child("profileImageUri").getValue(String.class);
+                        nameForMarker = snapshot.child("fullName").getValue(String.class);
 
-                MarkerOptions options = new MarkerOptions().position(latLng).title(nameForMarker);
-                  //  mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
-                   mMap.addMarker(options);
+                        LatLng latLng = new LatLng(lat, lon);
 
-
+                        MarkerOptions options = new MarkerOptions().position(latLng).title(nameForMarker);
+                        //  mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
+                        markerList.add(mMap.addMarker(options));
+                    }
 
                 }
+
             }
 
             @Override
@@ -241,6 +247,16 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 101);
             }
         }
+    }
+
+    private void removeMarkers() {
+        for(Marker marker : markerList) {
+
+            marker.remove();
+
+        }
+
+        markerList.clear();
     }
 
 
