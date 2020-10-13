@@ -28,9 +28,12 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ThrowOnExtraProperties;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -179,6 +182,26 @@ public class AddObject extends AppCompatActivity implements View.OnClickListener
                 objectKey=object.getKey();
                 handleUpload();//upload image
                 Toast.makeText(getApplicationContext(), "Added object.", Toast.LENGTH_SHORT).show();
+
+                //add coins
+                String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+                DatabaseReference uidRef = rootRef.child("Users").child(uid);
+                ValueEventListener valueEventListener = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        int coins = dataSnapshot.child("coins").getValue(int.class);
+                        coins=coins+100;
+                        rootRef.child("Users").child(uid).child("coins").setValue(coins);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Log.d(TAG, databaseError.getMessage()); //Don't ignore errors!
+                    }
+                };
+                uidRef.addListenerForSingleValueEvent(valueEventListener);
 
                 startActivity(new Intent(getApplicationContext(),FeedActivity.class));
 
