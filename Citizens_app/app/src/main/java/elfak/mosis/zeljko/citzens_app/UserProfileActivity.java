@@ -45,7 +45,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class UserProfileActivity extends AppCompatActivity {
 
     private ImageView mProfileImageView;
-    private TextView mUsernameTextView, mEmailTextView;
+    private TextView mUsernameTextView, mEmailTextView, mTextNotigf;
     private Button mSendRequestBtn, mDeclineRequestBtn;
     private DatabaseReference mUsersDatabaseRef, mFriendRequestDatabase, mFriendDatabase, mRootRef;
     private ProgressDialog mProgressDialog;
@@ -61,11 +61,17 @@ public class UserProfileActivity extends AppCompatActivity {
         final String usid = getIntent().getStringExtra("user_id");
         Toast.makeText(getApplicationContext(), "usid: " + usid, Toast.LENGTH_SHORT).show();
 
+
+
         mUsersDatabaseRef = FirebaseDatabase.getInstance().getReference().child("Users").child(usid);
         mFriendRequestDatabase = FirebaseDatabase.getInstance().getReference().child("Friend_req");
         mFriendDatabase = FirebaseDatabase.getInstance().getReference().child("Friends");
         mRootRef = FirebaseDatabase.getInstance().getReference();
         mCurrent_user = FirebaseAuth.getInstance().getCurrentUser();
+        mTextNotigf = (TextView)findViewById(R.id.textNotif);
+
+
+        mTextNotigf.setVisibility(View.INVISIBLE);
 
         mProfileImageView = (ImageView)findViewById(R.id.iv_thumbnail);
         mUsernameTextView = (TextView)findViewById(R.id.tv_username);
@@ -76,6 +82,16 @@ public class UserProfileActivity extends AppCompatActivity {
         mDeclineRequestBtn.setEnabled(false);
 
         mCurrent_state = "not_friends";
+
+        if(usid.equals(mCurrent_user.getUid())){
+            mSendRequestBtn.setVisibility(View.INVISIBLE);
+            mSendRequestBtn.setEnabled(false);
+            mDeclineRequestBtn.setVisibility(View.INVISIBLE);
+            mDeclineRequestBtn.setEnabled(false);
+            mTextNotigf.setVisibility(View.VISIBLE);
+            mTextNotigf.setText("This is how your profile looks to others.");
+
+        }
 
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setTitle("Loading user data");
@@ -269,8 +285,8 @@ public class UserProfileActivity extends AppCompatActivity {
                                 mSendRequestBtn.setEnabled(true);
                                 mCurrent_state="friends";
                                 mSendRequestBtn.setText("Unfriend this person");
-                                mDeclineRequestBtn.setVisibility(View.INVISIBLE);
-                                mDeclineRequestBtn.setEnabled(false);
+                                mDeclineRequestBtn.setText("Show friend location");
+
                             }
 
                             else {
@@ -341,6 +357,10 @@ public class UserProfileActivity extends AppCompatActivity {
                        }
                    });
                 }
+                if(mCurrent_user.equals("friends")) {
+
+                }
+
             }
         });
     }

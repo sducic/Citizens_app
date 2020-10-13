@@ -61,6 +61,11 @@
         tools:ignore="RtlCompat">
 
     </Button>
-
+    <TextView
+        android:id="@+id/textNotif"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:textAlignment="center"
+        android:layout_gravity="center"></TextView>
 
 </LinearLayout>

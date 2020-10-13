@@ -5,6 +5,10 @@
 
     <string name="change_photo">change_photo</string>
     <string name="title_activity_maps_tracker">Map</string>
+    <string name="title_activity_maps_users">Map</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

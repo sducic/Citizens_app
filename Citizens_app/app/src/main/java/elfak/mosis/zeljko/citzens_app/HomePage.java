@@ -2,11 +2,15 @@ package elfak.mosis.zeljko.citzens_app;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -23,6 +27,8 @@ public class HomePage extends AppCompatActivity {
     public static final String CHANNEL_ID="Citizens_app";
     public static final String CHANNEL_NAME="Citizens_application";
     public static final String CHANNEL_DESC = "Citizens_desc";
+
+    int LOCATION_REQUEST_CODE = 10002;
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -94,6 +100,8 @@ public class HomePage extends AppCompatActivity {
 
     }
 
+
+
     private void createNotificationChannel() {
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
             NotificationChannel nc = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
@@ -103,4 +111,6 @@ public class HomePage extends AppCompatActivity {
 
         }
     }
+
+
 }
