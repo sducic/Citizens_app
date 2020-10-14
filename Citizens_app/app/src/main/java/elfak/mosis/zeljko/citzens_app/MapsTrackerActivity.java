@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -66,6 +67,8 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
     SupportMapFragment mapFragment;
     FusedLocationProviderClient client;
     ArrayList<Marker> markerList = new ArrayList<Marker>();
+    private Bundle extras;
+    private Intent intent;
 
 
      DatabaseReference reference;
@@ -76,6 +79,8 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
 
     private LocationManager manager;
     private FirebaseUser currentUser;
+    private String user_id;
+    private boolean flag;
 
 
     ArrayAdapter<UserLocation> adapter;
@@ -100,6 +105,8 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps_tracker);
 
+        intent = getIntent();
+        extras = intent.getExtras();
 
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         String uid = currentUser.getUid();
@@ -107,6 +114,10 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
         latitude = FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("latitude");
         longitude = FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("longitude");
         mUsersDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
+        user_id = getIntent().getStringExtra("user_id");
+        flag = false;
+
+
 
 
 
@@ -122,7 +133,6 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
 
 
             //call method
-
             getCurrentLocUsers();
 
 
@@ -139,7 +149,6 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
 
 
         reference = FirebaseDatabase.getInstance().getReference().child("User-Location");
-
 
 
 
@@ -174,8 +183,22 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
                         MarkerOptions options = new MarkerOptions().position(latLng).title(nameForMarker);
 
 
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
-                        markerList.add(mMap.addMarker(options));
+                      /*  if(extras != null) {
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
+                            Toast.makeText(getApplicationContext(), "nesto", Toast.LENGTH_SHORT).show();
+                        }
+                        else{*/
+                      if(user_id != null) {
+                          if (user_id.equals(snapshot.getKey())) {
+                              flag = true;
+                              mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
+                          }
+                      }
+
+                      if(!flag)
+                          mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12));
+
+                      markerList.add(mMap.addMarker(options));
 
 
                 }
@@ -245,6 +268,7 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         getLocationUpdates();
+
     }
 
     @Override

@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -52,6 +53,7 @@ public class UserProfileActivity extends AppCompatActivity {
     private String mCurrent_state;
     private FirebaseUser mCurrent_user;
     private String user_token, fullName;
+    private double  userLongitude, userLatitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,8 +147,9 @@ public class UserProfileActivity extends AppCompatActivity {
                                     if(dataSnapshot.hasChild(usid)) {
                                         mCurrent_state="friends";
                                         mSendRequestBtn.setText("Unfriend this person");
-                                        mDeclineRequestBtn.setVisibility(View.INVISIBLE);
-                                        mDeclineRequestBtn.setEnabled(false);
+                                        mDeclineRequestBtn.setText("Show friend on map");
+                                        mDeclineRequestBtn.setVisibility(View.VISIBLE);
+                                        mDeclineRequestBtn.setEnabled(true);
                                     }
                                     else {
                                         mCurrent_state = "not_friends";
@@ -314,7 +317,7 @@ public class UserProfileActivity extends AppCompatActivity {
                                 mCurrent_state="not_friends";
                                 mSendRequestBtn.setText("Send friend request");
                                 mDeclineRequestBtn.setVisibility(View.INVISIBLE);
-                                mDeclineRequestBtn.setEnabled(false);
+                                mDeclineRequestBtn.setEnabled(true);
                             }
 
                             else {
@@ -357,7 +360,12 @@ public class UserProfileActivity extends AppCompatActivity {
                        }
                    });
                 }
-                if(mCurrent_user.equals("friends")) {
+                if(mCurrent_state.equals("friends")) {
+
+                    Intent ni = new Intent(getApplicationContext(), MapsTrackerActivity.class);
+                    ni.putExtra("user_id", usid);
+                    startActivity(ni);
+
 
                 }
 
