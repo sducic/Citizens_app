@@ -29,4 +29,10 @@ public class User {
     public String getEmail() { return email; }
     public int getCoins(){return coins;};
     public String getProfileImageUri(){return profileImageUri;}
+
+    public void addCoins(int n)
+    {
+        this.coins += n;
+    }
+
 }

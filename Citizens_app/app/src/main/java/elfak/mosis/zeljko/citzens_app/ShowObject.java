@@ -3,10 +3,12 @@ package elfak.mosis.zeljko.citzens_app;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -24,7 +26,11 @@ public class ShowObject extends AppCompatActivity {
 
     ImageView objectPhotoView, profileImageView;
     TextView emailView, dateView, descriptionView;
+
+    Button showOnMap;
     //public static String nameUser,profileIUriUser;
+
+    Double lon,lat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +86,8 @@ public class ShowObject extends AppCompatActivity {
                 String date = dataSnapshot.child("date").getValue(String.class);
                 String description = dataSnapshot.child("description").getValue(String.class);
                 String userID = dataSnapshot.child("UserID").getValue(String.class);
+                 lat = dataSnapshot.child("latitude").getValue(Double.class);
+                 lon = dataSnapshot.child("longitude").getValue(Double.class);
                 //email.setText(mail);
                 dateView.setText(date);
                 descriptionView.setText(description);
@@ -98,6 +106,17 @@ public class ShowObject extends AppCompatActivity {
         };
         uidRef.addListenerForSingleValueEvent(valueEventListener);
 
+
+        showOnMap = (Button) findViewById(R.id.showOnMap);
+        showOnMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(),Maps.class);
+                i.putExtra("Longitude",lon);
+                i.putExtra("Latitude",lat);
+                startActivity(i);
+            }
+        });
 
     }
 

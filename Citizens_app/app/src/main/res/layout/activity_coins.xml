@@ -8,8 +8,8 @@
 
     <RelativeLayout
         android:id="@+id/rellay1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="399dp"
+        android:layout_height="201dp"
         android:paddingBottom="20dp">
 
         <RelativeLayout
@@ -57,10 +57,13 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewUsersList2"
-            android:scrollbars="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            />
+            android:layout_width="379dp"
+            android:layout_height="388dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginEnd="19dp"
+            android:layout_marginRight="19dp"
+            android:scrollbars="vertical" />
     </RelativeLayout>
 
 </RelativeLayout>

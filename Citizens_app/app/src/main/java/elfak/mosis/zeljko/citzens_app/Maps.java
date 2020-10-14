@@ -18,6 +18,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -31,6 +32,9 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -48,6 +52,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
@@ -61,6 +66,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     double lon,lat;
 
     Button addObject;
+    Button radius;
     private boolean selCoorsEnabled = false;
     private LatLng placeLoc;
     public static final int SELECT_COORDINATES = 2;
@@ -72,7 +78,21 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
     boolean toAddObject = false;
     DatabaseReference database;
+
     int position = -1;
+
+    Location currentLoc;
+    List<Marker> AllMarkers = new ArrayList<Marker>();
+
+    EditText textMeters;
+    Circle circle;
+    List<Circle> circles;
+
+    User user;
+
+    Bundle extras;
+    Intent intent;
+
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT_WATCH)
 
@@ -81,7 +101,16 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+
+         intent = getIntent();
+         extras = intent.getExtras();
+
         database = FirebaseDatabase.getInstance().getReference().child("my-objects");
+
+
+
+
+
 
         Intent listIntent = getIntent();
         Bundle positionBundle = listIntent.getExtras();
@@ -104,7 +133,10 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
             //call method
-            getCurrentLocation();
+            if(extras == null){
+
+                getCurrentLocation();
+            }
             getProblemsLocations();
             setOnMapClickListener();
         } else {
@@ -171,6 +203,23 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         });
 
 
+        circles = new ArrayList<>();
+
+
+        currentLoc = new Location(NETWORK_STATS_SERVICE);
+        radius = findViewById(R.id.radius);
+        radius.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                funcForCall();
+            }
+        });
+
+
+
+        ////////////////
+
+
 
 
     }
@@ -209,6 +258,20 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
 
         map = googleMap;
+
+        // u slucaju da je mapa otvorena iz feed dela, da prikaze objekat na mapi
+        if(extras != null) {
+            double lat =getIntent().getExtras().getDouble("Latitude");
+            double lon = getIntent().getExtras().getDouble("Longitude");
+            Toast.makeText(getApplicationContext(),lat + " + " + lon, Toast.LENGTH_SHORT);
+            LatLng ll = new LatLng(lat, lon);
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(ll)
+                    .zoom(17).build();
+            map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            //map.animateCamera(CameraUpdateFactory.newLatLngZoom(ll, 170));
+           // map.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
+        }
 
     }
 
@@ -301,7 +364,9 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
                     MarkerOptions options = new MarkerOptions().position(latLng).title(description);
 
-                    map.addMarker(options);
+                    Marker mLocationMarker = map.addMarker(options);
+                    //map.addMarker(options);
+                    AllMarkers.add(mLocationMarker);
                 }
             }
 
@@ -310,5 +375,116 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
             }
         });
+    }
+
+
+
+    private void radiusFunction()
+    {
+        ///current Loc on Map
+       Task<Location> task = client.getLastLocation();
+        task.addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(final Location location) {
+                //when success
+                if(location != null) {
+                    mapFragment.getMapAsync(new OnMapReadyCallback() {
+                        @Override
+                        public void onMapReady(GoogleMap googleMap) {
+                            //initialize lat lng
+                            currentLoc.setLatitude(location.getLatitude());
+                            currentLoc.setLongitude(location.getLongitude());
+                        }
+                    });
+                }
+            }
+        });
+
+        //show object
+        database.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                    lat = snapshot.child("latitude").getValue(double.class);
+                    lon = snapshot.child("longitude").getValue(double.class);
+
+                    Location objectLoc = new Location("dumyprovider");
+                    objectLoc.setLongitude(lon);
+                    objectLoc.setLatitude(lat);
+
+
+                    //take distance value from editText
+                    textMeters =  (EditText)findViewById(R.id.meters);
+                    String value = textMeters.getText().toString();
+                    double distance = currentLoc.distanceTo(objectLoc);
+
+
+
+                    //show only object in radius
+                    if(distance < Integer.valueOf(value)) {
+
+                        String description = snapshot.child("description").getValue(String.class);
+                        LatLng latLng = new LatLng(lat,lon);
+
+                        MarkerOptions options = new MarkerOptions().position(latLng).title(description);
+
+                        Marker mLocationMarker = map.addMarker(options);
+                        AllMarkers.add(mLocationMarker);
+                    }
+
+                    ///show circle
+                    drawCircle(value,currentLoc.getLatitude(),currentLoc.getLongitude());
+
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+    private void removeAllMarkers() {
+        for (Marker mLocationMarker: AllMarkers) {
+            mLocationMarker.remove();
+        }
+        AllMarkers.clear();
+
+    }
+
+    private void clearCircles() {
+        for (Circle circle : circles) {
+            circle.remove();
+        }
+        circles.clear();
+    }
+
+    private void funcForCall()
+    {
+        removeAllMarkers();
+        radiusFunction();
+    }
+
+    private void drawCircle(String value, double lat, double lon)
+    {
+        clearCircles();
+        LatLng ll = new LatLng(currentLoc.getLatitude(), currentLoc.getLongitude());
+        CircleOptions circleOptions = new CircleOptions()
+                .center(ll)
+                .radius(Integer.valueOf(value))
+                .strokeWidth(0f)
+                .fillColor(0x40ff0000);
+        circles.add(map.addCircle(circleOptions));
+    }
+
+    @Override
+    public void onBackPressed() {
+        Toast.makeText(getApplicationContext(),"Home page",Toast.LENGTH_SHORT).show();
+        finish();
+        return;
     }
 }

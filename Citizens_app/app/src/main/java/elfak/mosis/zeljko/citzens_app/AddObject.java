@@ -28,9 +28,13 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ThrowOnExtraProperties;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -60,12 +64,16 @@ public class AddObject extends AppCompatActivity implements View.OnClickListener
     String[] country = { "Kategorija1", "Kategorija2", "Kategorija3", "Ostalo"};
     public static String kategorija;
 
+    User user;
 
     FirebaseAuth fAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_object);
+
+
+
 
         try{
             Intent listIntent=getIntent();
@@ -151,7 +159,6 @@ public class AddObject extends AppCompatActivity implements View.OnClickListener
 
          name = (EditText) findViewById(R.id.editTextName);
          description = (EditText) findViewById(R.id.editTextDescription);
-         category = (EditText) findViewById(R.id.editTextCategory);     // greska kad obrisem, ne znam zasto
          longitude = (EditText) findViewById(R.id.longitude_text);
          latitude = (EditText) findViewById(R.id.latitude_text);
 
@@ -166,7 +173,9 @@ public class AddObject extends AppCompatActivity implements View.OnClickListener
                 final String lon = longitude.getText().toString();
                 final String lat = latitude.getText().toString();
                 final String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+                /////////////DATUUUM
+                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
                 Date date = new Date();
                 String strDate = dateFormat.format(date).toString();
                 String imgUri="";
@@ -181,6 +190,10 @@ public class AddObject extends AppCompatActivity implements View.OnClickListener
                 Toast.makeText(getApplicationContext(), "Added object.", Toast.LENGTH_SHORT).show();
 
                 startActivity(new Intent(getApplicationContext(),FeedActivity.class));
+
+
+
+
 
             }
         });
@@ -223,7 +236,7 @@ public class AddObject extends AppCompatActivity implements View.OnClickListener
             }
         });
 
-        category.addTextChangedListener(new TextWatcher() {
+      /*  category.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -239,7 +252,7 @@ public class AddObject extends AppCompatActivity implements View.OnClickListener
 
             }
         });
-
+*/
 
     }
 
@@ -326,6 +339,12 @@ public class AddObject extends AppCompatActivity implements View.OnClickListener
 
                     }
                 });
+    }
+
+
+    private void addCoins() {
+        int n = 100;
+        user.addCoins(n);
     }
 
 

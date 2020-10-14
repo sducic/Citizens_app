@@ -72,16 +72,16 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
     private DatabaseReference latitude;
     private DatabaseReference longitude;
     private DatabaseReference mUsersDatabaseReference;
-    private Map<String, Bitmap> usersThumbnails;
+
 
     private LocationManager manager;
     private FirebaseUser currentUser;
 
-    ArrayList<UserLocation> usersLoc;
-    ArrayAdapter<UserLocation> adapter;
-    UserLocation user;
 
-    User user1;
+    ArrayAdapter<UserLocation> adapter;
+
+
+
 
 
 
@@ -103,26 +103,26 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
 
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         String uid = currentUser.getUid();
-        final ArrayList<User> lista = new ArrayList<>();
 
         latitude = FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("latitude");
         longitude = FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("longitude");
         mUsersDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
-        usersThumbnails = new HashMap<String, Bitmap>();
 
-        loadUsersThumbnails();
+
 
         mapFragment = (SupportMapFragment)getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-//initialize fused loc
+
+
+        //initialize fused loc
         client = LocationServices.getFusedLocationProviderClient(this);
         if(ActivityCompat.checkSelfPermission(MapsTrackerActivity.this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
 
             //call method
-            getCurrentLocation();
+
             getCurrentLocUsers();
 
 
@@ -147,65 +147,14 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
 
 
 
-        usersLoc = new ArrayList<>();
-        user = new UserLocation();
-
-    }
-
-    private void getCurrentLocation() {
-        //initialize task locat
-
-
-
-      /*  Task<Location> task = client.getLastLocation();
-        task.addOnSuccessListener(new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
-                latitude.setValue(location.getLatitude());
-                longitude.setValue(location.getLongitude());
-
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
-
-            }
-        });*/
-
-           Task<Location> task = client.getLastLocation();
-        task.addOnSuccessListener(new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(final Location location) {
-                //when success
-                if(location != null) {
-                    mapFragment.getMapAsync(new OnMapReadyCallback() {
-                        @Override
-                        public void onMapReady(GoogleMap googleMap) {
-                            //initialize lat lng
-                            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                            latitude.setValue(location.getLatitude());
-                            longitude.setValue(location.getLongitude());
-
-
-
-                            //create marker
-                            MarkerOptions options = new MarkerOptions().position(latLng).title("I am there");
-                            //zoom
-                            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,20));
-                            googleMap.addMarker(options);
-
-                        }
-                    });
-                }
-            }
-        });
-
 
 
     }
+
+
 
 
      private void getCurrentLocUsers(){
-
-
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Users");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
@@ -215,26 +164,19 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
 
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
 
-                    if(!snapshot.getKey().equals(currentUser.getUid())) {
-
-                        //   Toast.makeText(getApplicationContext(),String.valueOf(lat), Toast.LENGTH_SHORT).show();
                         lat = snapshot.child("latitude").getValue(double.class);
                         lon = snapshot.child("longitude").getValue(double.class);
-                        // image = snapshot.child("profileImageUri").getValue(String.class);
+
                         nameForMarker = snapshot.child("fullName").getValue(String.class);
 
                         LatLng latLng = new LatLng(lat, lon);
 
                         MarkerOptions options = new MarkerOptions().position(latLng).title(nameForMarker);
-                        Bitmap bmp = usersThumbnails.get(snapshot.getKey());
-                        if(bmp != null) {
-                            options.icon(BitmapDescriptorFactory.fromBitmap(bmp));
-                            options.anchor(0.5f, 0.907f);
-                        }
 
-                        //  mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
+
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
                         markerList.add(mMap.addMarker(options));
-                    }
+
 
                 }
 
@@ -270,78 +212,12 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
 
     private void removeMarkers() {
         for(Marker marker : markerList) {
-
             marker.remove();
-
         }
-
         markerList.clear();
     }
 
-    private Bitmap createBitmap(Bitmap b) {
-        Bitmap result = null;
-        try{
-            result = Bitmap.createBitmap(62, 76, Bitmap.Config.ARGB_8888);
-            result.eraseColor(Color.TRANSPARENT);
-            Canvas canvas = new Canvas(result);
-            Drawable drawable = getResources().getDrawable(R.drawable.circle);
-            drawable.setBounds(0, 0, 62, 76);
-            drawable.draw(canvas);
 
-            Paint roundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            RectF bitmapRect = new RectF();
-            canvas.save();
-
-            Bitmap bitmap = b;
-            //Bitmap bitmap = BitmapFactory.decodeFile(path.toString()); /*generate bitmap here if your image comes from any url*/
-            if (bitmap != null) {
-                BitmapShader shader = new BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
-                Matrix matrix = new Matrix();
-                float scale = 52 / (float) bitmap.getWidth();
-                matrix.postTranslate(5, 5);
-                matrix.postScale(scale, scale);
-                roundPaint.setShader(shader);
-                shader.setLocalMatrix(matrix);
-                bitmapRect.set(5, 5, 52 + 5, 52 + 5);
-                canvas.drawRoundRect(bitmapRect, 26, 26, roundPaint);
-            }
-            canvas.restore();
-            try {
-                canvas.setBitmap(null);
-            } catch (Exception e) {}
-        }
-        catch(Throwable t) {
-                t.printStackTrace();
-        }
-
-        return result;
-    }
-
-    private void loadUsersThumbnails() {
-        mUsersDatabaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                for(DataSnapshot ds : dataSnapshot.getChildren()) {
-                    String imgUri= ds.child("profileImageUri").getValue().toString();
-                    Uri myUri = Uri.parse(imgUri);
-                    Bitmap bmp;
-                    try {
-                        bmp = Picasso.get().load(myUri).get();
-                        usersThumbnails.put(ds.getKey(), createBitmap(bmp));
-                    }
-                    catch(Exception e) {
-
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
 
 
     @Override
@@ -350,7 +226,7 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 44) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getCurrentLocation();
+
                 getCurrentLocUsers();
             }
         }
@@ -368,6 +244,7 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        getLocationUpdates();
     }
 
     @Override
@@ -389,7 +266,7 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
     public void onBackPressed() {
         mMap.clear();
 
-        Toast.makeText(getApplicationContext(),"Gotovo",Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(),"Home page",Toast.LENGTH_SHORT).show();
         finish();
         return;
     }
