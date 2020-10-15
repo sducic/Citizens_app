@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
     Button buttonLogin;
     Button buttonRegister;
+    Button buttonReset;
     EditText editTextEmail,editTextPassword;
     FirebaseAuth fAuth;
     DatabaseReference mUsersDatabaseReference;
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         editTextEmail= findViewById(R.id.edit_text_email);
         buttonLogin = findViewById(R.id.button_login);
         buttonRegister = findViewById(R.id.button_register);
+        buttonReset=findViewById(R.id.button_reset);
         fAuth= FirebaseAuth.getInstance();
 
         if(fAuth.getCurrentUser()!=null)
@@ -57,6 +59,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, RegisterActivity.class);      //otvara register activiry na dugme
+                startActivity(intent);
+            }
+        });
+
+        buttonReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ResetPasswordActivity.class);      //otvara register activiry na dugme
                 startActivity(intent);
             }
         });
