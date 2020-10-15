@@ -1,12 +1,16 @@
 package elfak.mosis.zeljko.citzens_app;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -27,9 +31,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 //import com.squareup.picasso.Picasso;
@@ -44,11 +52,29 @@ public class FeedActivity extends AppCompatActivity {
     Button btnSearch;
     EditText searchTxt;
 
+    TextView textDate;
+    TextView textDate2;
+
+    Button pickDate;
+    Button pickDate2;
+    Calendar c;
+    DatePickerDialog dpd;
+
+    Button findDate;
+
+    private DatePickerDialog.OnDateSetListener mDateSetListener;
+    private DatePickerDialog.OnDateSetListener mDateSetListener2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
+
+        textDate = (TextView)findViewById(R.id.textDate_first);
+        textDate2 = (TextView)findViewById(R.id.textDate_second);
+
+        pickDate = (Button) findViewById(R.id.pickDate);
+        pickDate2 = (Button) findViewById(R.id.pickDate2);
 
         spin = (Spinner) findViewById(R.id.spinner1);
         btnSearch = (Button) findViewById(R.id.button_Search);
@@ -120,50 +146,40 @@ public class FeedActivity extends AppCompatActivity {
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                String naslov = searchTxt.getText().toString().trim();
-                FirebaseRecyclerAdapter<Object, UserViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Object, UserViewHolder>(
-                        Object.class,
-                        R.layout.post_card,
-                        UserViewHolder.class,
-                        mUsersDatabaseReference.orderByChild("name").equalTo(naslov)
-
-
-                ) {
-                    @Override
-                    protected void populateViewHolder(UserViewHolder viewHolder, Object object, int position) {
-
-
-                        viewHolder.setName(object.getName());
-                        viewHolder.setDate(object.getDate());
-                        //viewHolder.setCategory(object.getCategory());
-
-                        String imgUri = object.getImgUri();
-                        Uri myUri = Uri.parse(imgUri);
-                        viewHolder.setImage(myUri);
-
-
-                        final String object_id = getRef(position).getKey();
-
-
-                        viewHolder.mView.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent showObject = new Intent(FeedActivity.this, ShowObject.class);
-                                showObject.putExtra("object_id", object_id);
-                                startActivity(showObject);
-                            }
-                        });
-
-                    }
-
-
-                };
-                mUsersList.setAdapter(firebaseRecyclerAdapter);
+                SearchByNaslov();
             }
 
 
         });
+
+
+
+        pickDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pickDateTime();
+            }
+        });
+
+        pickDate2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pickDateTime2();
+            }
+        });
+
+
+
+        findDate = (Button) findViewById(R.id.findDate);
+        findDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                searchByDate();
+            }
+        });
+
+
+
 
     }
 
@@ -307,4 +323,171 @@ public class FeedActivity extends AppCompatActivity {
 
         super.onStop();
     }
+
+    private void pickDateTime() {
+        pickDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Calendar cal = Calendar.getInstance();
+                int year = cal.get(Calendar.YEAR);
+                int month = cal.get(Calendar.MONTH);
+                int day = cal.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog dialog1 = new DatePickerDialog(
+                        FeedActivity.this,
+                        android.R.style.Theme_Holo_Light_Dialog_MinWidth,
+                        mDateSetListener,
+                        year, month, day);
+                //dialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog1.show();
+            }
+        });
+
+
+        mDateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                month = month + 1;
+                String date;
+                if (day < 10) {
+                    date = year + "/" + month + "/0" + day;
+                } else {
+                    date = year + "/" + month + "/" + day;
+                }
+
+                textDate.setText(date);
+            }
+        };
+    }
+
+
+
+
+
+
+    private void pickDateTime2()
+    {
+
+        pickDate2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Calendar cal = Calendar.getInstance();
+                int year = cal.get(Calendar.YEAR);
+                int month = cal.get(Calendar.MONTH);
+                int day = cal.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog dialog1 = new DatePickerDialog(
+                        FeedActivity.this,
+                        android.R.style.Theme_Holo_Light_Dialog_MinWidth,
+                        mDateSetListener,
+                        year,month,day);
+                //dialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog1.show();
+            }
+        });
+
+
+        mDateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                month = month + 1;
+                String date;
+                if(day < 10)
+                {
+                    date = year + "/" + month + "/0" + day;
+                }
+                else {
+                    date = year + "/" + month + "/" + day;
+                }
+
+                textDate2.setText(date);
+            }
+        };
+
+    }
+
+
+
+    private void SearchByNaslov()
+    {
+        String naslov = searchTxt.getText().toString().trim();
+        FirebaseRecyclerAdapter<Object, UserViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Object, UserViewHolder>(
+                Object.class,
+                R.layout.post_card,
+                UserViewHolder.class,
+                mUsersDatabaseReference.orderByChild("name").equalTo(naslov)
+
+        ) {
+            @Override
+            protected void populateViewHolder(UserViewHolder viewHolder, Object object, int position) {
+
+
+                viewHolder.setName(object.getName());
+                viewHolder.setDate(object.getDate());
+                //viewHolder.setCategory(object.getCategory());
+
+                String imgUri = object.getImgUri();
+                Uri myUri = Uri.parse(imgUri);
+                viewHolder.setImage(myUri);
+
+                final String object_id = getRef(position).getKey();
+
+                viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent showObject = new Intent(FeedActivity.this, ShowObject.class);
+                        showObject.putExtra("object_id", object_id);
+                        startActivity(showObject);
+                    }
+                });
+            }
+        };
+        mUsersList.setAdapter(firebaseRecyclerAdapter);
+        searchTxt.getText().clear();
+    }
+
+
+    private void searchByDate()
+    {
+
+            String date = textDate.getText().toString();
+            String date2 = textDate2.getText().toString();
+        Toast.makeText(getApplicationContext(),date,Toast.LENGTH_SHORT).show();
+            FirebaseRecyclerAdapter<Object, UserViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Object, UserViewHolder>(
+                    Object.class,
+                    R.layout.post_card,
+                    UserViewHolder.class,
+                    mUsersDatabaseReference.orderByChild("date").startAt(date).endAt(date2)
+
+            ) {
+                @Override
+                protected void populateViewHolder(UserViewHolder viewHolder, Object object, int position) {
+
+
+                    viewHolder.setName(object.getName());
+                    viewHolder.setDate(object.getDate());
+                    //viewHolder.setCategory(object.getCategory());
+
+                    String imgUri = object.getImgUri();
+                    Uri myUri = Uri.parse(imgUri);
+                    viewHolder.setImage(myUri);
+
+                    final String object_id = getRef(position).getKey();
+
+                    viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent showObject = new Intent(FeedActivity.this, ShowObject.class);
+                            showObject.putExtra("object_id", object_id);
+                            startActivity(showObject);
+                        }
+                    });
+                }
+            };
+            mUsersList.setAdapter(firebaseRecyclerAdapter);
+            searchTxt.getText().clear();
+
+    }
+
+
 }
