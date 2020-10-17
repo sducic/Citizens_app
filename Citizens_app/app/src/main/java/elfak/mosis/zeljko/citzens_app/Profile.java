@@ -51,7 +51,7 @@ public class Profile extends AppCompatActivity {
     ImageView profileImageView;
     FirebaseAuth fAuth;
     private static Bitmap slika = null;
-    TextView email,phoneNumber,fullName;
+    TextView email,phoneNumber,fullName, coins;
 
     int TAKE_IMAGE_CODE = 10001;
 
@@ -66,6 +66,7 @@ public class Profile extends AppCompatActivity {
         email=findViewById(R.id.txt_email);
         phoneNumber=findViewById(R.id.txt_phone);
         fullName=findViewById(R.id.txt_fullName);
+        coins = findViewById(R.id.txt_coins);
 
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -90,17 +91,7 @@ public class Profile extends AppCompatActivity {
         });
 
 
-        btnLog=findViewById(R.id.button_logout);
 
-        btnLog.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(getApplicationContext(),MainActivity.class));
-                finish();
-            }
-        });
 
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -112,9 +103,11 @@ public class Profile extends AppCompatActivity {
                 String mail = dataSnapshot.child("email").getValue(String.class);
                 String name = dataSnapshot.child("fullName").getValue(String.class);
                 String phone = dataSnapshot.child("phoneNumber").getValue(String.class);
+                int coin = dataSnapshot.child("coins").getValue(Integer.class);
                email.setText(mail);
                fullName.setText(name);
                phoneNumber.setText(phone);
+               coins.setText(String.valueOf(coin));
 
             }
 

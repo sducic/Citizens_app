@@ -83,5 +83,18 @@
 
     </androidx.gridlayout.widget.GridLayout>
 
+    <Button
+        android:id="@+id/btn_add_virtual"
+        android:layout_width="385dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/buttonshape"
+        android:text="add ar object"
+        android:textFontWeight="15"
+        app:layout_constraintBottom_toBottomOf="@+id/google_map"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.384"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.846" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Camera;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -31,6 +32,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
@@ -93,6 +95,12 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     Bundle extras;
     Intent intent;
 
+    Location userLoc;
+    List<Location> locationsAR;
+    double curLat;
+    double curLon;
+
+
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT_WATCH)
 
@@ -106,6 +114,10 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
          extras = intent.getExtras();
 
         database = FirebaseDatabase.getInstance().getReference().child("my-objects");
+
+
+        locationsAR = new ArrayList<Location>();
+        userLoc = new Location(LOCATION_SERVICE);
 
 
 
@@ -130,7 +142,8 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
         //check permission
         if(ActivityCompat.checkSelfPermission(Maps.this,
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
 
             //call method
             if(extras == null){
@@ -139,6 +152,11 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             }
             getProblemsLocations();
             setOnMapClickListener();
+           // getArObject();
+
+
+
+
         } else {
             //when permission denied
 
@@ -278,9 +296,20 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(requestCode == 44){
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getCurrentLocation();
+                //getCurrentLocation();
+
+                if(extras == null){
+
+                    getCurrentLocation();
+                }
+                getProblemsLocations();
+                setOnMapClickListener();
+
+                getCurrentLocationForAR();
+                getArObject();
             }
         }
 
@@ -364,9 +393,9 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
                     MarkerOptions options = new MarkerOptions().position(latLng).title(description);
 
-                    Marker mLocationMarker = map.addMarker(options);
+                     map.addMarker(options);
                     //map.addMarker(options);
-                    AllMarkers.add(mLocationMarker);
+                  //  AllMarkers.add(mLocationMarker);
                 }
             }
 
@@ -375,6 +404,11 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
             }
         });
+
+
+
+
+
     }
 
 
@@ -487,4 +521,146 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         finish();
         return;
     }
+
+
+
+    ///////////////////ar
+
+
+    private void getCurrentLocationForAR() {
+
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference uidRef = rootRef.child("Users").child(uid);
+
+        ValueEventListener valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                curLat = dataSnapshot.child("latitude").getValue(double.class);
+                curLon = dataSnapshot.child("longitude").getValue(double.class);
+
+                userLoc.setLatitude(curLat);
+                userLoc.setLongitude(curLon);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+        uidRef.addListenerForSingleValueEvent(valueEventListener);
+    }
+    private void getArObject()
+    {
+
+        Toast.makeText(getApplicationContext(),"Pera", Toast.LENGTH_SHORT);
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("ar_objects");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                    double lat_ar = snapshot.child("latitude").getValue(double.class);
+                    double lon_ar = snapshot.child("longitude").getValue(double.class);
+
+                    LatLng latLng = new LatLng(lat_ar, lon_ar);
+
+                    MarkerOptions options = new MarkerOptions().position(latLng).title("AR").icon(getMarkerIcon("#FF032791"));
+                    map.addMarker(options);
+
+
+                    Location objectLoc = new Location("dumyprovider");
+                    objectLoc.setLatitude(lat_ar);
+                    objectLoc.setLongitude(lon_ar);
+                    locationsAR.add(objectLoc);
+
+
+                }
+                compareArLocations();
+
+            }
+
+
+
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+
+    }
+
+    private void compareArLocations()
+    {
+
+        //Toast.makeText(getApplicationContext(),String.valueOf(locationasAR.size()),Toast.LENGTH_SHORT).show();
+     /*   Task<Location> task = client.getLastLocation();
+        task.addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if(location != null) {
+                    mapFragment.getMapAsync(new OnMapReadyCallback() {
+                        @Override
+                        public void onMapReady(GoogleMap googleMap) {
+                            Location userLoc = new Location(LOCATION_SERVICE);
+                            userLoc.setLatitude(location.getLatitude());
+                            userLoc.setLongitude(location.getLongitude());
+                            Toast.makeText(getApplicationContext(),userLoc.getLatitude() + " : " + userLoc.getLongitude(),Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }}
+        });
+*/
+
+
+        for(Location location : locationsAR)
+        {
+            float n = location.distanceTo(userLoc);
+
+
+            if(((n/1000)/1000) < 10) {
+
+                map.setOnMarkerClickListener(marker -> {
+                    if (marker.getTitle().equals("AR")) {
+
+                        if((n/1000)/1000 < 10) {
+                            Toast.makeText(getApplicationContext(),String.valueOf((n/1000)/1000),Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(Maps.this, AR_showObject.class);
+                            startActivity(intent);
+                        }
+
+                    } else {
+
+                        Toast.makeText(getApplicationContext(), marker.getTitle(), Toast.LENGTH_SHORT).show();
+                    }
+                    return true;
+                });
+                break;
+            }
+        }
+    }
+
+
+
+
+    //////////////////
+
+
+    public BitmapDescriptor getMarkerIcon(String color) {
+        float[] hsv = new float[3];
+        Color.colorToHSV(Color.parseColor(color), hsv);
+        return BitmapDescriptorFactory.defaultMarker(hsv[0]);
+    }
+
+
+
+
+
 }

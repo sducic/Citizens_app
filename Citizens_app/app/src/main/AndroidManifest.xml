@@ -7,6 +7,12 @@
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the 'MyLocation' functionality.
     -->
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature
+        android:name="android.hardware.camera.ar"
+        android:required="true" />
+
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <uses-feature android:name="android.hardware.bluetooth" />
@@ -26,7 +32,15 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ResetPasswordActivity"></activity>
+        <activity android:name=".AR_showObject"></activity>
+        <activity android:name=".AR_activity_add_new_object" />
+        <activity android:name=".AR_get_more_coins" />
+
+        <meta-data
+            android:name="com.google.ar.core"
+            android:value="required" />
+
+        <activity android:name=".ResetPasswordActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -39,21 +53,45 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".UserProfileActivity" />
-        <activity android:name=".ShowObject" />
+        <activity
+            android:name=".UserProfileActivity"
+            android:label="" />
+        <activity
+            android:name=".ShowObject"
+            android:label="" />
         <activity
             android:name=".MapsTrackerActivity"
             android:label="@string/title_activity_maps_tracker" />
-        <activity android:name=".AddObject" />
-        <activity android:name=".Friends" />
-        <activity android:name=".AddFriend" />
-        <activity android:name=".Profile" />
-        <activity android:name=".FeedActivity" />
-        <activity android:name=".Coins" />
-        <activity android:name=".RegisterActivity" />
-        <activity android:name=".AllUsers" />
-        <activity android:name=".Maps" />
-        <activity android:name=".HomePage" />
+        <activity
+            android:name=".AddObject"
+            android:label="" />
+        <activity
+            android:name=".Friends"
+            android:label="" />
+        <activity
+            android:name=".AddFriend"
+            android:label="" />
+        <activity
+            android:name=".Profile"
+            android:label="" />
+        <activity
+            android:name=".FeedActivity"
+            android:label="" />
+        <activity
+            android:name=".Coins"
+            android:label="" />
+        <activity
+            android:name=".RegisterActivity"
+            android:label="" />
+        <activity
+            android:name=".AllUsers"
+            android:label="" />
+        <activity
+            android:name=".Maps"
+            android:label="" />
+        <activity
+            android:name=".HomePage"
+            android:label="" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

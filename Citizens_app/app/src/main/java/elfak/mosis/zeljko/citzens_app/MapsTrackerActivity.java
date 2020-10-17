@@ -1,6 +1,7 @@
 package elfak.mosis.zeljko.citzens_app;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -25,6 +26,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
@@ -37,6 +39,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -44,6 +47,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.ar.core.Anchor;
+import com.google.ar.sceneform.AnchorNode;
+import com.google.ar.sceneform.rendering.ModelRenderable;
+import com.google.ar.sceneform.ux.ArFragment;
+import com.google.ar.sceneform.ux.TransformableNode;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -90,20 +98,29 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
 
 
 
+
+
+
     private final int MIN_TIME = 1000; // 1 second
     private final int MIN_DISTANCE = 1; // 1 meter
 
     double lon, lat;
+
     String nameForMarker;
     String image;
 
 
     Marker myMarker;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps_tracker);
+
+
+
 
         intent = getIntent();
         extras = intent.getExtras();
@@ -134,6 +151,11 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
 
             //call method
             getCurrentLocUsers();
+            ////ar
+           // getCurrentLocationForAR();
+           // getArObject();
+           // compareArLocations();
+
 
 
         } else {
@@ -159,6 +181,8 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
 
 
     }
+
+
 
 
 
@@ -250,7 +274,12 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
         if (requestCode == 44) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
+
+
                 getCurrentLocUsers();
+
+
+
             }
         }
     }
@@ -268,6 +297,7 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         getLocationUpdates();
+
 
     }
 

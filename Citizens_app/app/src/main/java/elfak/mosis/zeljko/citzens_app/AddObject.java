@@ -185,6 +185,7 @@ public class AddObject extends AppCompatActivity implements View.OnClickListener
                 double lon1 = Double.parseDouble(lon);
                 double lat1 = Double.parseDouble(lat);
 
+
                 Object object = new Object(nme, desc, kategorija, lon1, lat1,userID,strDate,imgUri);
                 MyObjectData.getInstance().addNewPlace(object);
                 objectKey=object.getKey();
