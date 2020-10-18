@@ -115,7 +115,10 @@ public class MapsActivityZara extends FragmentActivity implements OnMapReadyCall
 
                     LatLng latLng = new LatLng(lat,lon);
                     MarkerOptions options = new MarkerOptions().position(latLng).title("EberFirth");
-                    options.icon(BitmapDescriptorFactory.fromBitmap(HomePage.profileImages.get("QvLk1r3179M82GzSTTRQBbpkem02")));
+                    Bitmap bmp = HomePage.profileImages.get(ds.getKey());
+                    if(bmp != null) {
+                        options.icon(BitmapDescriptorFactory.fromBitmap(bmp));
+                    }
                     Marker marker = mMap.addMarker(options);
                     markerList.add(marker);
                     mMarkerMap.put(marker.getId(), ds.getKey());
