@@ -622,15 +622,15 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
         for(Location location : locationsAR)
         {
-            float n = location.distanceTo(userLoc);
+            float n = distance(userLoc.getLatitude(), userLoc.getLongitude(),location.getLatitude(),location.getLongitude());
 
 
-            if(((n/1000)/1000) < 10) {
+            if(n < 10) {
 
                 map.setOnMarkerClickListener(marker -> {
                     if (marker.getTitle().equals("AR")) {
 
-                        if((n/1000)/1000 < 10) {
+                        if(n< 10) {
                             Toast.makeText(getApplicationContext(),String.valueOf((n/1000)/1000),Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(Maps.this, AR_showObject.class);
                             startActivity(intent);
@@ -657,6 +657,22 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         float[] hsv = new float[3];
         Color.colorToHSV(Color.parseColor(color), hsv);
         return BitmapDescriptorFactory.defaultMarker(hsv[0]);
+    }
+
+    public float distance (double lat_a, double lng_a, double lat_b, double lng_b )
+    {
+        double earthRadius = 3958.75;
+        double latDiff = Math.toRadians(lat_b-lat_a);
+        double lngDiff = Math.toRadians(lng_b-lng_a);
+        double a = Math.sin(latDiff /2) * Math.sin(latDiff /2) +
+                Math.cos(Math.toRadians(lat_a)) * Math.cos(Math.toRadians(lat_b)) *
+                        Math.sin(lngDiff /2) * Math.sin(lngDiff /2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        double distance = earthRadius * c;
+
+        int meterConversion = 1609;
+
+        return new Float(distance * meterConversion).floatValue();
     }
 
 

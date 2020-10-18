@@ -62,8 +62,8 @@ public class FeedActivity extends AppCompatActivity {
 
     Button findDate;
 
-    private DatePickerDialog.OnDateSetListener mDateSetListener;
-    private DatePickerDialog.OnDateSetListener mDateSetListener2;
+    private DatePickerDialog.OnDateSetListener fromDate;
+    private DatePickerDialog.OnDateSetListener toDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,17 +154,93 @@ public class FeedActivity extends AppCompatActivity {
 
 
 
+        ///pick date 1
+
         pickDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                pickDateTime();
+                // pickDateTime();
+
+                fromDate = new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker1, int year, int month, int day) {
+                        month = month + 1;
+                        String date;
+                        if (day < 10) {
+                            date = year + "/" + month + "/0" + day;
+                        } else {
+                            date = year + "/" + month + "/" + day;
+                        }
+
+                        textDate.setText(date);
+                    }
+                };
+
+
+
+                pickDate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Calendar cal = Calendar.getInstance();
+                        int year = cal.get(Calendar.YEAR);
+                        int month = cal.get(Calendar.MONTH);
+                        int day = cal.get(Calendar.DAY_OF_MONTH);
+
+                        DatePickerDialog dialog1 = new DatePickerDialog(
+                                FeedActivity.this,
+                                android.R.style.Theme_Holo_Light_Dialog_MinWidth,
+                                fromDate,
+                                year, month, day);
+                        //dialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        dialog1.show();
+                    }
+                });
+
             }
         });
 
+        ////pick date 2
         pickDate2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                pickDateTime2();
+                //pickDateTime2();
+
+                toDate = new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker2, int year, int month, int day) {
+                        month = month + 1;
+                        String date;
+                        if(day < 10)
+                        {
+                            date = year + "/" + month + "/0" + day;
+                        }
+                        else {
+                            date = year + "/" + month + "/" + day;
+                        }
+
+                        textDate2.setText(date);
+                    }
+                };
+
+
+
+                pickDate2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Calendar cal = Calendar.getInstance();
+                        int year = cal.get(Calendar.YEAR);
+                        int month = cal.get(Calendar.MONTH);
+                        int day = cal.get(Calendar.DAY_OF_MONTH);
+
+                        DatePickerDialog dialog1 = new DatePickerDialog(
+                                FeedActivity.this,
+                                android.R.style.Theme_Holo_Light_Dialog_MinWidth,
+                                toDate,
+                                year,month,day);
+                        //dialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        dialog1.show();
+                    }
+                });
             }
         });
 
@@ -324,87 +400,6 @@ public class FeedActivity extends AppCompatActivity {
         super.onStop();
     }
 
-    private void pickDateTime() {
-        pickDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Calendar cal = Calendar.getInstance();
-                int year = cal.get(Calendar.YEAR);
-                int month = cal.get(Calendar.MONTH);
-                int day = cal.get(Calendar.DAY_OF_MONTH);
-
-                DatePickerDialog dialog1 = new DatePickerDialog(
-                        FeedActivity.this,
-                        android.R.style.Theme_Holo_Light_Dialog_MinWidth,
-                        mDateSetListener,
-                        year, month, day);
-                //dialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                dialog1.show();
-            }
-        });
-
-
-        mDateSetListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                month = month + 1;
-                String date;
-                if (day < 10) {
-                    date = year + "/" + month + "/0" + day;
-                } else {
-                    date = year + "/" + month + "/" + day;
-                }
-
-                textDate.setText(date);
-            }
-        };
-    }
-
-
-
-
-
-
-    private void pickDateTime2()
-    {
-
-        pickDate2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Calendar cal = Calendar.getInstance();
-                int year = cal.get(Calendar.YEAR);
-                int month = cal.get(Calendar.MONTH);
-                int day = cal.get(Calendar.DAY_OF_MONTH);
-
-                DatePickerDialog dialog1 = new DatePickerDialog(
-                        FeedActivity.this,
-                        android.R.style.Theme_Holo_Light_Dialog_MinWidth,
-                        mDateSetListener,
-                        year,month,day);
-                //dialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                dialog1.show();
-            }
-        });
-
-
-        mDateSetListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                month = month + 1;
-                String date;
-                if(day < 10)
-                {
-                    date = year + "/" + month + "/0" + day;
-                }
-                else {
-                    date = year + "/" + month + "/" + day;
-                }
-
-                textDate2.setText(date);
-            }
-        };
-
-    }
 
 
 
