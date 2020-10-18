@@ -171,8 +171,36 @@
 
             </LinearLayout>
 
-        </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="40dp">
 
+                <TextView
+                    android:id="@+id/tv_locationService"
+                    android:layout_width="match_parent"                   android:layout_height="match_parent"
+                    android:text="Location service off/on"
+                    android:textAlignment="center"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/headings"
+                    android:textSize="13sp"></TextView>
+
+                <Switch
+                    android:id="@+id/switch_locationService"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="20dp"
+                    android:background="@color/headings"
+                    >
+
+                </Switch>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
 
 
     </RelativeLayout>

@@ -5,17 +5,21 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,7 +44,7 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
-
+import java.util.function.Predicate;
 
 
 public class Profile extends AppCompatActivity {
@@ -52,6 +56,8 @@ public class Profile extends AppCompatActivity {
     FirebaseAuth fAuth;
     private static Bitmap slika = null;
     TextView email,phoneNumber,fullName, coins;
+    public Switch mLocationServiceSwitch;
+    public static boolean switchFlag;
 
     int TAKE_IMAGE_CODE = 10001;
 
@@ -67,6 +73,7 @@ public class Profile extends AppCompatActivity {
         phoneNumber=findViewById(R.id.txt_phone);
         fullName=findViewById(R.id.txt_fullName);
         coins = findViewById(R.id.txt_coins);
+        mLocationServiceSwitch = (Switch)findViewById(R.id.switch_locationService);
 
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -74,6 +81,35 @@ public class Profile extends AppCompatActivity {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference baza = ref.child("Users").child(userId).child("profileImageUri");
+
+        mLocationServiceSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                if(isChecked) {
+                    prefs.edit().putBoolean("locked", true).apply();
+                    LocationServiceHelper.startLocationService(getApplicationContext());
+                    switchFlag=true;
+                }
+                else {
+                    prefs.edit().putBoolean("locked", false).apply();
+                    LocationServiceHelper.stopLocationService(getApplicationContext());
+                    switchFlag=false;
+
+                }
+            }
+        });
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        boolean locked = prefs.getBoolean("locked", false);
+        if(locked) {
+            mLocationServiceSwitch.setChecked(true);
+            switchFlag=true;
+        }
+        else{
+            mLocationServiceSwitch.setChecked(false);
+            switchFlag=false;
+        }
 
         baza.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

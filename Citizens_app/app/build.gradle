@@ -160,3 +160,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:+'
     implementation 'androidx.constraintlayout:constraintlayout:+'
 }
+
+dependencies {
+    implementation 'com.google.android.gms:play-services-maps:+'
+    implementation 'androidx.appcompat:appcompat:+'
+}

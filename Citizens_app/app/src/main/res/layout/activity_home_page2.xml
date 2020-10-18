@@ -19,10 +19,11 @@
         android:textStyle="bold" />
 
     <GridLayout
+        android:id="@+id/grid_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/title_view"
-        android:layout_margin="20dp"
+        android:layout_margin="15dp"
         android:columnCount="2"
         android:rowCount="3">
 
@@ -237,7 +238,17 @@
                     android:textStyle="bold" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
-    </GridLayout>
 
+    </GridLayout>
+    <ProgressBar
+        android:id="@+id/fetching_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?android:attr/progressBarPadding"
+        android:layout_gravity="center_horizontal"
+        android:layout_below="@id/title_view"
+        android:layout_marginTop="550dp"
+        >
+    </ProgressBar>
 
 </RelativeLayout>

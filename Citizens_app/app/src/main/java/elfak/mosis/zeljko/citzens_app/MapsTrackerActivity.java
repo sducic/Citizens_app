@@ -94,13 +94,6 @@ public class MapsTrackerActivity extends AppCompatActivity implements OnMapReady
     ArrayAdapter<UserLocation> adapter;
 
 
-
-
-
-
-
-
-
     private final int MIN_TIME = 1000; // 1 second
     private final int MIN_DISTANCE = 1; // 1 meter
 

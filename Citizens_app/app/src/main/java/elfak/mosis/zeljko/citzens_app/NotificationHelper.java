@@ -33,7 +33,24 @@ public class NotificationHelper {
 
     }
 
-    public static void sendNotification(String title, String text, String token) {
+    public static void sendNotificationNearbyObjects(Context ctx) {
 
+        Intent intent = new Intent(ctx, MapsActivityZara.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                ctx,
+                100,
+                intent,
+                PendingIntent.FLAG_CANCEL_CURRENT
+        );
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(ctx, HomePage.CHANNEL_ID)
+                .setSmallIcon(R.drawable.newsfeedicon)
+                .setContentTitle("Notification")
+                .setContentText("Looks like there is a friend nearby!")
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationManagerCompat mManagerCompat = NotificationManagerCompat.from(ctx);
+        mManagerCompat.notify(1, mBuilder.build());
     }
 }
