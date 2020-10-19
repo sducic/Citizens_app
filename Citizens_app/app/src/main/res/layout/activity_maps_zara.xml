@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,3 +13,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MapsActivityZara" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        >
+
+        <ImageView
+            android:id="@+id/imgMyLocation"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="@color/grey"
+            app:srcCompat="@drawable/baseline_my_location_24"
+            android:scaleType="fitXY"
+
+            />
+    </LinearLayout>
+
+
+</RelativeLayout>

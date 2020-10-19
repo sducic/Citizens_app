@@ -45,12 +45,12 @@ public class NotificationHelper {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(ctx, HomePage.CHANNEL_ID)
                 .setSmallIcon(R.drawable.newsfeedicon)
                 .setContentTitle("Notification")
-                .setContentText("Looks like there is a friend nearby!")
+                .setContentText("Looks like there is a user nearby!")
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         NotificationManagerCompat mManagerCompat = NotificationManagerCompat.from(ctx);
-        mManagerCompat.notify(1, mBuilder.build());
+        mManagerCompat.notify(0, mBuilder.build());
     }
 }

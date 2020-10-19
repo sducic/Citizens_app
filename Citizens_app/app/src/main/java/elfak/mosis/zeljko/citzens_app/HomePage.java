@@ -16,6 +16,14 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapShader;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.graphics.Shader;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -219,8 +227,7 @@ public class HomePage extends AppCompatActivity {
                         byte[] data = task.getResult();
                         Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
                         Bitmap scaledBmp = Bitmap.createScaledBitmap(bmp, 100,100,false);
-                        profileImages.put(s, scaledBmp);
-                        icb.onCallback(s,scaledBmp);
+                        icb.onCallback(s,createBitmap(scaledBmp));
 
 
                     }
@@ -229,6 +236,46 @@ public class HomePage extends AppCompatActivity {
         }
 
     }
+
+    private Bitmap createBitmap(Bitmap bitmap) {
+        Bitmap result = null;
+        try{
+            result = Bitmap.createBitmap(70, 110, Bitmap.Config.ARGB_8888);
+            result.eraseColor(Color.TRANSPARENT);
+            Canvas canvas = new Canvas(result);
+            Drawable drawable = getResources().getDrawable(R.drawable.circle);
+            drawable.setBounds(0, 0, 70, 110);
+            drawable.draw(canvas);
+
+            Paint roundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            RectF bitmapRect = new RectF();
+            canvas.save();
+
+            //Bitmap bitmap = BitmapFactory.decodeFile(path.toString()); /*generate bitmap here if your image comes from any url*/
+            if (bitmap != null) {
+                BitmapShader shader = new BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+                Matrix matrix = new Matrix();
+                float scale = 70 / (float) bitmap.getWidth();
+                matrix.postTranslate(5, 5);
+                matrix.postScale(scale, scale);
+                roundPaint.setShader(shader);
+                shader.setLocalMatrix(matrix);
+                bitmapRect.set(5, 5, 60 + 5, 60 + 5);
+                canvas.drawRoundRect(bitmapRect, 26, 26, roundPaint);
+
+            }
+            canvas.restore();
+            try {
+                canvas.setBitmap(null);
+            } catch (Exception e) {}
+        }
+        catch(Throwable t) {
+            t.printStackTrace();
+        }
+
+        return result;
+    }
+
 
     private interface FriendsCallback {
         void onCallback(ArrayList<String> ids);

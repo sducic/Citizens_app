@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentActivity;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,6 +15,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -53,8 +55,11 @@ public class MapsActivityZara extends FragmentActivity implements OnMapReadyCall
     private Location myLocation;
     private HashMap<String, Bitmap> friendsImages;
     private HashMap<String, String> mMarkerMap;
+    private Marker myMarker;
+    private String focusUserId;
+    private boolean focusFlag;
 
-    private final int MIN_TIME = 1000;
+    private final int MIN_TIME = 500;
     private final int MIN_DISTANCE = 1;
 
 
@@ -71,35 +76,67 @@ public class MapsActivityZara extends FragmentActivity implements OnMapReadyCall
         mUsersImagesStorage = FirebaseStorage.getInstance().getReference().child("profileImages");
         mFriendsDatabaseRef = FirebaseDatabase.getInstance().getReference().child("Friends");
         mMarkerMap = new HashMap<>();
+        focusUserId = getIntent().getStringExtra("user_id");
+        if(focusUserId == null)
+            focusFlag=false;
+        else
+            focusFlag=true;
 
         mAuth = FirebaseAuth.getInstance();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         friendsImages = new HashMap<String, Bitmap>();
         locationManagerInit();
-
         Toast.makeText(getApplicationContext(), String.valueOf(HomePage.profileImages.size()), Toast.LENGTH_SHORT).show();
 
 
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(myLocation != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            prefs.edit().putLong("myLatitude", (long) myLocation.getLatitude());
+            prefs.edit().putLong("myLongitude", (long) myLocation.getLongitude());
+        }
+    }
+
+    @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-       retrieveUsersLocations();
-       mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(myLocation.getLatitude(), myLocation.getLongitude()), 12));
-       mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-           @Override
-           public boolean onMarkerClick(Marker marker) {
-               String user_id = mMarkerMap.get(marker.getId());
-               if(user_id != null) {
-                   Intent intent = new Intent(getApplicationContext(), UserProfileActivity.class);
-                   intent.putExtra("user_id", user_id);
-                   startActivity(intent);
-               }
-               return false;
-           }
-       });
+        retrieveUsersLocations();
+        // mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(myLocation.getLatitude(), myLocation.getLongitude()), 12));
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                String user_id = mMarkerMap.get(marker.getId());
+                if (user_id != null) {
+                    Intent intent = new Intent(getApplicationContext(), UserProfileActivity.class);
+                    intent.putExtra("user_id", user_id);
+                    startActivity(intent);
+                }
+                return false;
+            }
+        });
+
+
+        LatLng latLng;
+        if(myLocation == null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            double lat = (double)prefs.getLong("myLatitude", 0);
+            double lon = (double)prefs.getLong("myLongitude", 0);
+            latLng = new LatLng(lat,lon);
+        }
+        else {
+            latLng =  new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
+        }
+
+        MarkerOptions options = new MarkerOptions().position(latLng).title("Me");
+        myMarker = mMap.addMarker(options);
+        if(!focusFlag)
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,12));
+
     }
 
     private void retrieveUsersLocations() {
@@ -110,18 +147,26 @@ public class MapsActivityZara extends FragmentActivity implements OnMapReadyCall
                 mMarkerMap.clear();
                 for(DataSnapshot ds : dataSnapshot.getChildren()) {
 
-                    double lon = ds.child("longitude").getValue(double.class);
-                    double lat = ds.child("latitude").getValue(double.class);
+                    if(!ds.getKey().equals(mAuth.getUid())) {
 
-                    LatLng latLng = new LatLng(lat,lon);
-                    MarkerOptions options = new MarkerOptions().position(latLng).title("EberFirth");
-                    Bitmap bmp = HomePage.profileImages.get(ds.getKey());
-                    if(bmp != null) {
-                        options.icon(BitmapDescriptorFactory.fromBitmap(bmp));
+                        double lon = ds.child("longitude").getValue(double.class);
+                        double lat = ds.child("latitude").getValue(double.class);
+
+                        LatLng latLng = new LatLng(lat, lon);
+                        MarkerOptions options = new MarkerOptions().position(latLng).title("EberFirth");
+                        Bitmap bmp = HomePage.profileImages.get(ds.getKey());
+                        if (bmp != null) {
+                            options.icon(BitmapDescriptorFactory.fromBitmap(bmp));
+                        }
+                        Marker marker = mMap.addMarker(options);
+                        markerList.add(marker);
+                        mMarkerMap.put(marker.getId(), ds.getKey());
+
+                        if(ds.getKey().equals(focusUserId) && focusFlag) {
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,17));
+                            focusFlag=false;
+                        }
                     }
-                    Marker marker = mMap.addMarker(options);
-                    markerList.add(marker);
-                    mMarkerMap.put(marker.getId(), ds.getKey());
 
                 }
 
@@ -163,7 +208,13 @@ public class MapsActivityZara extends FragmentActivity implements OnMapReadyCall
 
     @Override
     public void onLocationChanged(Location location) {
-
+        if(location != null) {
+            if(myMarker != null)
+                myMarker.remove();
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+            MarkerOptions options = new MarkerOptions().position(latLng).title("Me");
+            myMarker = mMap.addMarker(options);
+        }
     }
 
     @Override

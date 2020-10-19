@@ -362,11 +362,9 @@ public class UserProfileActivity extends AppCompatActivity {
                 }
                 if(mCurrent_state.equals("friends")) {
 
-                    Intent ni = new Intent(getApplicationContext(), MapsTrackerActivity.class);
+                    Intent ni = new Intent(getApplicationContext(), MapsActivityZara.class);
                     ni.putExtra("user_id", usid);
                     startActivity(ni);
-
-
                 }
 
             }

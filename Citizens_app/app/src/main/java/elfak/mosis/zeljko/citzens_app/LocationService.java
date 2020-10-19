@@ -51,8 +51,8 @@ public class LocationService extends Service {
     private final static long UPDATE_INTERVAL = 4 * 1000;
     private final static long FASTEST_INTERVAL = 1000;
     private final static double earthRadius = 6371000;
-    private static final int CHECK_NEARBY_OBJECTS_INTERVAL = 10000;
-    private static final int DISTANCE = 1000;
+    private static final int CHECK_NEARBY_OBJECTS_INTERVAL = 60000;
+    private static final int DISTANCE_USERS = 2000;
 
     private Handler mHandler = new Handler();
     private Runnable mRunnable;
@@ -181,10 +181,10 @@ public class LocationService extends Service {
                 }
 
                 for(LatLng latLng : usersPositions) {
-                    if (calculateDistance(currUserPosition, latLng) <= DISTANCE) {
+                    Log.e(TAG, String.valueOf(calculateDistance(currUserPosition, latLng)));
+                    if (calculateDistance(currUserPosition, latLng) <= DISTANCE_USERS) {
                         NotificationHelper.sendNotificationNearbyObjects(getApplicationContext());
-                        Log.e(TAG, String.valueOf(calculateDistance(currUserPosition, latLng)));
-                        return;
+                        break;
                     }
                 }
 
@@ -199,19 +199,17 @@ public class LocationService extends Service {
     }
 
     public double calculateDistance(LatLng a, LatLng b) {
-        double latRadius = earthRadius * Math.cos(Math.toRadians(a.latitude));
-        double dLat = Math.abs(a.latitude-b.latitude);
-        double dLon = Math.abs(a.longitude -b.longitude);
 
-        if(dLat > 180)
-            dLat-=360;
-        if(dLon > 180)
-            dLon-=360;
+        Location locA = new Location("pointA");
+        locA.setLatitude(a.latitude);
+        locA.setLongitude(a.longitude);
 
-        double dy = earthRadius * Math.toRadians(dLat);
-        double dx = earthRadius * Math.toRadians(dLon);
+        Location locB = new Location("pointB");
+        locB.setLatitude(b.latitude);
+        locB.setLongitude(b.longitude);
 
-        double d = Math.sqrt(dy*dy+dx*dx);
-        return (d / 3.281);
+        double distance = locA.distanceTo(locB);
+        return distance;
+
     }
 }
