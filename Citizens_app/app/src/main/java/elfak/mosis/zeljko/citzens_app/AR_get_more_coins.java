@@ -1,6 +1,7 @@
 package elfak.mosis.zeljko.citzens_app;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Point;
 import android.media.AudioAttributes;
 import android.media.SoundPool;
@@ -10,7 +11,9 @@ import android.os.Bundle;
 import android.view.Display;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -24,6 +27,12 @@ import com.google.ar.sceneform.rendering.MaterialFactory;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.ShapeFactory;
 import com.google.ar.sceneform.rendering.Texture;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Random;
 
@@ -33,7 +42,7 @@ public class AR_get_more_coins extends AppCompatActivity {
     private Camera camera;
     private ModelRenderable bulletRenderable;
     private boolean timerStarted = false;
-    private int balloonsLeft = 20;
+    private int balloonsLeft = 10;
     private Point point;
     private TextView balloonsLeftText;
     private SoundPool soundPool;
@@ -120,6 +129,9 @@ public class AR_get_more_coins extends AppCompatActivity {
             });
 
         }).start();
+
+
+        AddCoins();
     }
 
     @SuppressLint("SetTextI18n")
@@ -189,6 +201,38 @@ public class AR_get_more_coins extends AppCompatActivity {
                         scene.addChild(node);
                     }
                 });
+    }
+
+
+
+    private void AddCoins()
+    {
+
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference uidRef = rootRef.child("Users").child(uid);
+        ValueEventListener valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(balloonsLeft == 1) {
+                    int coins = dataSnapshot.child("coins").getValue(int.class);
+                    coins += 10;
+                    rootRef.child("Users").child(uid).child("coins").setValue(coins);
+                    Toast.makeText(getApplicationContext(),"Congratulations! You scored 10 coins!", Toast.LENGTH_SHORT);
+
+                    Intent i = new Intent(AR_get_more_coins.this, Coins.class);
+                    startActivity(i);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+        uidRef.addListenerForSingleValueEvent(valueEventListener);
+
     }
 }
 

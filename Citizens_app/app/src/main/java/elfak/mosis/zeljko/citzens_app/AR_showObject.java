@@ -22,8 +22,10 @@ import com.google.ar.core.exceptions.UnavailableArcoreNotInstalledException;
 import com.google.ar.core.exceptions.UnavailableSdkTooOldException;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.ArSceneView;
+import com.google.ar.sceneform.Camera;
 import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.Scene;
+import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.Renderable;
@@ -35,6 +37,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.Random;
 
 public class AR_showObject extends AppCompatActivity {
 
@@ -49,6 +53,8 @@ public class AR_showObject extends AppCompatActivity {
     private Renderable renderable;
     private ModelRenderable andyRenderable;
 
+    Scene scene;
+    Camera camera;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -62,7 +68,7 @@ public class AR_showObject extends AppCompatActivity {
 
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.arFragment);
 
-        Toast.makeText(getApplicationContext(),"Tap to see",Toast.LENGTH_LONG).show();
+       /* Toast.makeText(getApplicationContext(),"Tap to see",Toast.LENGTH_LONG).show();
 
         // adding listener for detecting plane
         arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
@@ -80,13 +86,45 @@ public class AR_showObject extends AppCompatActivity {
 
 
 
-        });
+        });*/
+
+        CustomArFragment fragment = (CustomArFragment) getSupportFragmentManager().findFragmentById(R.id.arFragment);
+        scene = fragment.getArSceneView().getScene();
+        camera = scene.getCamera();
+
+
+        ModelRenderable.builder()
+                .setSource(this, Uri.parse("TocoToucan.sfb"))
+                .build()
+                .thenAccept(modelRenderable -> {
+
+                    // for (int i = 0; i < 10; i++){
+
+                    Node node = new Node();
+                    node.setRenderable(modelRenderable);
+
+                    Random random = new Random();
+                    float x = random.nextInt(8) - 4f;
+                    float y = random.nextInt(2);
+                    float z = random.nextInt(4);
+
+                    Vector3 position = new Vector3( x, y, -z - 5f);
+                    Vector3 worldPosition = scene.getCamera().getWorldPosition();
+
+
+                    node.setWorldPosition(position);
+                    node.setLocalRotation(Quaternion.axisAngle(new Vector3(0, 1f, 0), 230));
+
+                    // scene.addChild(node);
+                    addModelToScene(modelRenderable);
+                    // }
+                });
 
 
 
     }
 
-    private void addModelToScene(Anchor anchor, ModelRenderable modelRenderable) {
+   /* private void addModelToScene(Anchor anchor, ModelRenderable modelRenderable) {
         AnchorNode node = new AnchorNode(anchor);
         TransformableNode transformableNode = new TransformableNode(arFragment.getTransformationSystem()); //  for moving, resizing object
         transformableNode.setParent(node); // need to attach to parent
@@ -95,7 +133,18 @@ public class AR_showObject extends AppCompatActivity {
         arFragment.getArSceneView().getScene().addChild(node); // adding only parent node, so the child nodes will be added automatically
         transformableNode.select();
     }
+*/
 
+
+    private void addModelToScene( ModelRenderable modelRenderable) {
+        AnchorNode node = new AnchorNode();
+        TransformableNode transformableNode = new TransformableNode(arFragment.getTransformationSystem()); //  for moving, resizing object
+        transformableNode.setParent(node); // need to attach to parent
+        transformableNode.setRenderable(modelRenderable);
+
+        arFragment.getArSceneView().getScene().addChild(node); // adding only parent node, so the child nodes will be added automatically
+        transformableNode.select();
+    }
 
 
 

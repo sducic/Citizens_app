@@ -135,7 +135,7 @@ public class AR_activity_add_new_object extends AppCompatActivity implements  Vi
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference uidRef = rootRef.child("Users").child(uid);
+        DatabaseReference uidRef = rootRef.child("UsersLocation").child(uid);
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

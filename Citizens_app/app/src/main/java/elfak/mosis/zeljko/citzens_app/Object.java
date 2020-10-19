@@ -44,6 +44,14 @@ public class Object {
         this.category = category;
     }
 
+    public Object(String description, String category, double latitude, double longitude)
+    {
+        this.description = description;
+        this.category = category;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
     public double getLongitude() {
         return longitude;
     }

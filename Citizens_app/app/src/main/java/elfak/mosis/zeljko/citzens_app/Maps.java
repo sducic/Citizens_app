@@ -18,14 +18,18 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SearchView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentActivity;
 
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -84,7 +88,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     int position = -1;
 
     Location currentLoc;
-    List<Marker> AllMarkers = new ArrayList<Marker>();
+    List<Marker> AllMarkers;
 
     EditText textMeters;
     Circle circle;
@@ -101,6 +105,12 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     double curLon;
 
 
+    List<Object> listOfObject;
+    Spinner spinner;
+    String izabranaKategorija;
+    DatabaseReference mUsersDatabaseReference;
+
+    Button btnAddVirtual;
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT_WATCH)
 
@@ -119,8 +129,14 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         locationsAR = new ArrayList<Location>();
         userLoc = new Location(LOCATION_SERVICE);
 
+        listOfObject = new ArrayList<Object>();
+        AllMarkers = new ArrayList<Marker>();
 
 
+        spinner = (Spinner) findViewById(R.id.spinner2);
+
+
+        btnAddVirtual =(Button) findViewById(R.id.btn_add_virtual);
 
 
 
@@ -238,6 +254,18 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         ////////////////
 
 
+        getCategories();
+
+
+        btnAddVirtual.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(Maps.this, AR_activity_add_new_object.class);
+                startActivity(i);
+            }
+        });
+
+
 
 
     }
@@ -310,6 +338,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
                 getCurrentLocationForAR();
                 getArObject();
+                getCategories();
             }
         }
 
@@ -385,15 +414,20 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
-                    lat = snapshot.child("latitude").getValue(double.class);
-                    lon = snapshot.child("longitude").getValue(double.class);
+                    double lat = snapshot.child("latitude").getValue(double.class);
+                    double lon = snapshot.child("longitude").getValue(double.class);
 
                     String description = snapshot.child("description").getValue(String.class);
+                    String category =  snapshot.child("category").getValue(String.class);
                     LatLng latLng = new LatLng(lat,lon);
 
                     MarkerOptions options = new MarkerOptions().position(latLng).title(description);
 
-                     map.addMarker(options);
+                     Marker marker = map.addMarker(options);
+                     AllMarkers.add(marker);
+
+                     Object object = new Object(description,category,lat,lon);
+                     listOfObject.add(object);
                     //map.addMarker(options);
                   //  AllMarkers.add(mLocationMarker);
                 }
@@ -554,7 +588,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     private void getArObject()
     {
 
-        Toast.makeText(getApplicationContext(),"Pera", Toast.LENGTH_SHORT);
+
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("ar_objects");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
@@ -569,7 +603,8 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                     LatLng latLng = new LatLng(lat_ar, lon_ar);
 
                     MarkerOptions options = new MarkerOptions().position(latLng).title("AR").icon(getMarkerIcon("#FF032791"));
-                    map.addMarker(options);
+                    Marker marker = map.addMarker(options);
+                    AllMarkers.add(marker);
 
 
                     Location objectLoc = new Location("dumyprovider");
@@ -678,5 +713,79 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
 
 
+    private void getCategories()
+    {
+        final List<String> list = new ArrayList<String>();
 
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("my-objects");
+
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String category = snapshot.child("category").getValue(String.class);
+
+
+                    if(!list.contains(category))
+                        list.add(category);
+
+                    ArrayAdapter<String> a = new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_spinner_item, list);
+                    a.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    //  Setting the ArrayAdapter data on the Spinner
+                    spinner.setAdapter(a);
+
+                }
+                String categoryAR = "ar_objects";
+                list.add(categoryAR);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        spin();
+    }
+
+    private void spin()
+    {
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                izabranaKategorija = (String) spinner.getSelectedItem();
+
+                removeAllMarkers();
+                if(izabranaKategorija.equals("ar_objects"))
+                {
+                    getArObject();
+                }
+                else {
+
+                    for (Object obj : listOfObject) {
+                        if (obj.category.equals(izabranaKategorija)) {
+                            double lat2 = obj.latitude;
+                            double lon2 = obj.longitude;
+
+                            String description = obj.description;
+                            LatLng latLng = new LatLng(lat2, lon2);
+
+                            MarkerOptions options = new MarkerOptions().position(latLng).title(description);
+
+                            Marker marker = map.addMarker(options);
+                            AllMarkers.add(marker);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
 }
