@@ -180,6 +180,7 @@ public class HomePage extends AppCompatActivity {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         boolean locked = prefs.getBoolean("locked", false);
         if(locked) {
+            Profile.switchFlag=true;
             LocationServiceHelper.startLocationService(getApplicationContext());
         }
     }
@@ -205,6 +206,7 @@ public class HomePage extends AppCompatActivity {
         mUsersDatabaseRef.child(mAuth.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                friendsIds.clear();
                 for(DataSnapshot ds : dataSnapshot.getChildren()) {
                     friendsIds.add(ds.getKey());
                 }

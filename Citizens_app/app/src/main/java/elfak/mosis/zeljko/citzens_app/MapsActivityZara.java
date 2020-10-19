@@ -96,8 +96,8 @@ public class MapsActivityZara extends FragmentActivity implements OnMapReadyCall
         super.onDestroy();
         if(myLocation != null) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            prefs.edit().putLong("myLatitude", (long) myLocation.getLatitude());
-            prefs.edit().putLong("myLongitude", (long) myLocation.getLongitude());
+            prefs.edit().putLong("myLatitude", (long) myLocation.getLatitude()).apply();
+            prefs.edit().putLong("myLongitude", (long) myLocation.getLongitude()).apply();
         }
     }
 
