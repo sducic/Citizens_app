@@ -16,6 +16,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -58,6 +59,8 @@ public class MapsActivityZara extends FragmentActivity implements OnMapReadyCall
     private Marker myMarker;
     private String focusUserId;
     private boolean focusFlag;
+    private boolean initialFlag;
+    private ProgressBar pBar;
 
     private final int MIN_TIME = 500;
     private final int MIN_DISTANCE = 1;
@@ -76,6 +79,7 @@ public class MapsActivityZara extends FragmentActivity implements OnMapReadyCall
         mUsersImagesStorage = FirebaseStorage.getInstance().getReference().child("profileImages");
         mFriendsDatabaseRef = FirebaseDatabase.getInstance().getReference().child("Friends");
         mMarkerMap = new HashMap<>();
+        initialFlag=true;
         focusUserId = getIntent().getStringExtra("user_id");
         if(focusUserId == null)
             focusFlag=false;
@@ -192,8 +196,10 @@ public class MapsActivityZara extends FragmentActivity implements OnMapReadyCall
                     ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                     locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
+                    Toast.makeText(getApplicationContext(), "GPS", Toast.LENGTH_SHORT).show();
                 } else if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                     locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
+                    Toast.makeText(getApplicationContext(), "NETWORK", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(this, "No provider Enabled", Toast.LENGTH_SHORT).show();
                 }
@@ -201,10 +207,18 @@ public class MapsActivityZara extends FragmentActivity implements OnMapReadyCall
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 101);
             }
 
-            myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 101) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                locationManagerInit();
+            }
+        }
+    }
 
     @Override
     public void onLocationChanged(Location location) {
@@ -214,6 +228,10 @@ public class MapsActivityZara extends FragmentActivity implements OnMapReadyCall
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             MarkerOptions options = new MarkerOptions().position(latLng).title("Me");
             myMarker = mMap.addMarker(options);
+            if(initialFlag){
+                initialFlag=false;
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,17));
+            }
         }
     }
 
