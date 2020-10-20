@@ -94,7 +94,7 @@ public class AR_showObject extends AppCompatActivity {
 
 
         ModelRenderable.builder()
-                .setSource(this, Uri.parse("TocoToucan.sfb"))
+                .setSource(this, Uri.parse("StopSign_1358.sfb"))
                 .build()
                 .thenAccept(modelRenderable -> {
 
@@ -102,6 +102,8 @@ public class AR_showObject extends AppCompatActivity {
 
                     Node node = new Node();
                     node.setRenderable(modelRenderable);
+
+
 
                     Random random = new Random();
                     float x = random.nextInt(8) - 4f;
@@ -141,6 +143,9 @@ public class AR_showObject extends AppCompatActivity {
         TransformableNode transformableNode = new TransformableNode(arFragment.getTransformationSystem()); //  for moving, resizing object
         transformableNode.setParent(node); // need to attach to parent
         transformableNode.setRenderable(modelRenderable);
+
+        transformableNode.getScaleController().setMaxScale(0.02f);
+        transformableNode.getScaleController().setMinScale(0.01f);
 
         arFragment.getArSceneView().getScene().addChild(node); // adding only parent node, so the child nodes will be added automatically
         transformableNode.select();

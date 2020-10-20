@@ -62,7 +62,7 @@ public class AR_activity_add_new_object extends AppCompatActivity implements  Vi
 
             // adding model to the scene
             ModelRenderable.builder()
-                    .setSource(this, Uri.parse("TocoToucan.sfb"))
+                    .setSource(this, Uri.parse("StopSign_1358.sfb"))
                     .build()
                     .thenAccept(modelRenderable -> addModelToScene(anchor, modelRenderable));
             getCurrentLocation();
@@ -112,6 +112,10 @@ public class AR_activity_add_new_object extends AppCompatActivity implements  Vi
         TransformableNode transformableNode = new TransformableNode(arFragment.getTransformationSystem()); //  for moving, resizing object
         transformableNode.setParent(node); // need to attach to parent
         transformableNode.setRenderable(modelRenderable);
+
+        //velicina ar objekta
+        transformableNode.getScaleController().setMaxScale(0.3f);
+        transformableNode.getScaleController().setMinScale(0.2f);
 
         arFragment.getArSceneView().getScene().addChild(node); // adding only parent node, so the child nodes will be added automatically
         transformableNode.select();

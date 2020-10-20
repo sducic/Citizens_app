@@ -64,6 +64,8 @@ public class FeedActivity extends AppCompatActivity {
     private DatePickerDialog.OnDateSetListener fromDate;
     private DatePickerDialog.OnDateSetListener toDate;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +84,7 @@ public class FeedActivity extends AppCompatActivity {
         mUsersList.setLayoutManager(new LinearLayoutManager(this));
         mUsersDatabaseReference = FirebaseDatabase.getInstance().getReference().child("my-objects");
         mUsersDatabaseReference.keepSynced(true);
+
 
         getCategories(); //ucitavanje kategorija u spinner
 
@@ -347,6 +350,8 @@ public class FeedActivity extends AppCompatActivity {
 
                     if(!list.contains(category))
                         list.add(category);
+
+
 
                     ArrayAdapter<String> a = new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_spinner_item, list);
                     a.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

@@ -98,6 +98,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     private Button btnAddVirtual;
     private Circle circle;
     private EditText textMeters;
+    private Button btn_add_object;
 
     private double curLat; //in function for currentLocation
     private double curLon;
@@ -131,6 +132,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         searchView = findViewById(R.id.sv_location);
         addObject = findViewById(R.id.add_object_btn);
         radius = findViewById(R.id.radius);
+        btn_add_object = findViewById(R.id.add_object_btn);
 
         userLoc = new Location(LOCATION_SERVICE); //used get current for AR
         currentLoc = new Location(NETWORK_STATS_SERVICE); //used in radius
@@ -166,13 +168,22 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
                 //u slucaju da se otvara iz feed-a
                 getCurrentLocation();
+                getCategories();
+                getArObject();
+
+                getProblemsLocations();
+
+               // setOnMapClickListener();
             }
+            else {
 
-            getProblemsLocations();
-            getCategories();
-            getArObject();
+                getCategories();
+                getArObject();
+                getProblemsLocations();
 
-            setOnMapClickListener();
+
+                //setOnMapClickListener();
+            }
 
         } else {
             //when permission denied
@@ -226,6 +237,8 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                     setOnMapClickListener();
                                  }
             }
+
+
         });
 
 
@@ -250,6 +263,13 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             }
         });
 
+        btn_add_object.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(),"Choose place on map",Toast.LENGTH_SHORT).show();
+                setOnMapClickListener();
+            }
+        });
 
 
 
@@ -286,13 +306,23 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 if(extras == null){
 
                     getCurrentLocation();
-                }
-                getProblemsLocations();
-                setOnMapClickListener();
+                   // setOnMapClickListener();
 
-               // getCurrentLocationForAR();
-                getArObject();
-                getCategories();
+
+                    getProblemsLocations();
+                    getArObject();
+                    getCategories();
+                }
+                else {
+                    getCategories();
+                //setOnMapClickListener();
+
+                    getArObject();
+                    getProblemsLocations();
+
+
+
+                }
             }
         }
 
@@ -659,6 +689,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                     a.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     //  Setting the ArrayAdapter data on the Spinner
                     spinner.setAdapter(a);
+
 
                 }
                 String categoryAR = "ar_objects";
