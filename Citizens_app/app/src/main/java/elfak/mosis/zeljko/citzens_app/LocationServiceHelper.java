@@ -12,12 +12,12 @@ import static androidx.core.content.ContextCompat.getSystemService;
 
 public class LocationServiceHelper {
 
+
     public static void startLocationService(Context ctx) {
         if(!isLocationServiceRunning(ctx)) {
             Intent serviceIntent  = new Intent(ctx, LocationService.class);
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 ctx.startForegroundService(serviceIntent);
-                Toast.makeText(ctx, "udjomo", Toast.LENGTH_SHORT).show();
             }
             else {
                 ctx.startService(serviceIntent);
@@ -31,7 +31,7 @@ public class LocationServiceHelper {
         ctx.stopService(new Intent(ctx, LocationService.class));
     }
 
-    private static boolean isLocationServiceRunning(Context ctx) {
+    public static boolean isLocationServiceRunning(Context ctx) {
         ActivityManager manager = (ActivityManager)ctx.getSystemService(ACTIVITY_SERVICE);
         for(ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if("elfak.mosis.zeljko.citzens_app.LocationService".equals(service.service.getClassName())) {

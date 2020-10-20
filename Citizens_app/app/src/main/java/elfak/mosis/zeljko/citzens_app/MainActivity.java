@@ -98,8 +98,9 @@ public class MainActivity extends AppCompatActivity {
                         else
                         {
                             Toast.makeText(MainActivity.this,"Error"+task.getException().getMessage(),Toast.LENGTH_SHORT).show();
-                            // progressBar.setVisibility(View.GONE);
+
                         }
+                        //progressBar.setVisibility(View.GONE);
                     }
                 });
 

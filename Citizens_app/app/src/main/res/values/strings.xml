@@ -10,6 +10,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_maps_zara">Map</string>
+    <string name="title_activity_user_location">Map</string>
+    <string name="title_activity_user_locations">Map</string>
 
 
 </resources>

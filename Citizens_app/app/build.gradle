@@ -176,3 +176,13 @@ sceneform.asset('sampledata/StopSign_1358.obj',
         'default',
         'sampledata/StopSign_1358.sfa',
         'src/main/assets/StopSign_1358')
+
+dependencies {
+    implementation 'com.google.android.gms:play-services-maps:+'
+    implementation 'androidx.appcompat:appcompat:+'
+}
+
+dependencies {
+    implementation 'com.google.android.gms:play-services-maps:+'
+    implementation 'androidx.appcompat:appcompat:+'
+}

@@ -83,7 +83,7 @@ public class HomePage extends AppCompatActivity {
         btnMaps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(HomePage.this, MapsActivityZara.class);
+                Intent intent = new Intent(HomePage.this, UserLocationsActivity.class);
                 startActivityForResult(intent,1);
 
             }

@@ -11,8 +11,10 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -111,6 +113,11 @@ public class LocationService extends Service {
         return START_NOT_STICKY;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
     private void getLocation() {
 
         LocationRequest mLocationRequestHighAccuracy = new LocationRequest();
@@ -120,6 +127,7 @@ public class LocationService extends Service {
 
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(getApplicationContext(), "Please allow your location for using Location Service", Toast.LENGTH_LONG).show();
             Log.d(TAG, "getLocation: stopping the location service.");
             stopSelf();
             return;
@@ -152,11 +160,11 @@ public class LocationService extends Service {
     }
 
     private void checkNearbyObjectsRunnable() {
-
         mHandler.postDelayed(mRunnable = new Runnable() {
             @Override
             public void run() {
                 if(Profile.switchFlag) {
+                    Log.d(TAG, String.valueOf(Thread.currentThread().getId()));
                     checkNearbyObjects();
                     mHandler.postDelayed(mRunnable, CHECK_NEARBY_OBJECTS_INTERVAL);
                 }
@@ -212,4 +220,5 @@ public class LocationService extends Service {
         return distance;
 
     }
+
 }
