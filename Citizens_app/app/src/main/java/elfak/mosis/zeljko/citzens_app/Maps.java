@@ -133,6 +133,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         addObject = findViewById(R.id.add_object_btn);
         radius = findViewById(R.id.radius);
         btn_add_object = findViewById(R.id.add_object_btn);
+        textMeters =  (EditText)findViewById(R.id.meters);
 
         userLoc = new Location(LOCATION_SERVICE); //used get current for AR
         currentLoc = new Location(NETWORK_STATS_SERVICE); //used in radius
@@ -246,8 +247,15 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             @Override
             public void onClick(View view) {
 
-
-                    funcForCall();
+                String radius = textMeters.getText().toString();
+                if(!radius.isEmpty() && radius != null) {
+                    int rad = Integer.valueOf(radius);
+                    if(rad > 0)
+                        funcForCall();
+                    else {
+                        Toast.makeText(getApplicationContext(), "Please enter valid radius", Toast.LENGTH_SHORT).show();
+                    }
+                }
 
 
             }
@@ -458,7 +466,6 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
 
                     //take distance value from editText
-                    textMeters =  (EditText)findViewById(R.id.meters);
                     String value = textMeters.getText().toString();
                     double distance = currentLoc.distanceTo(objectLoc);
 

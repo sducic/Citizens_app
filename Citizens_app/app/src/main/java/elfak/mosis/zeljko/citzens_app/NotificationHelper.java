@@ -35,7 +35,7 @@ public class NotificationHelper {
 
     public static void sendNotificationNearbyObjects(Context ctx) {
 
-        Intent intent = new Intent(ctx, MapsActivityZara.class);
+        Intent intent = new Intent(ctx, UserLocationsActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 ctx,
                 100,

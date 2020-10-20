@@ -60,7 +60,7 @@ public class UserLocationsActivity extends FragmentActivity implements OnMapRead
     private Location myLocation;
     private Marker myMarker;
     private boolean isLocationServiceRunning;
-    private boolean onCreateZoom;
+    private boolean onCreateZoom, focusFlag;
 
     private DatabaseReference mLocationsDatabaseRef;
     private List<Marker> markerList;
@@ -68,6 +68,7 @@ public class UserLocationsActivity extends FragmentActivity implements OnMapRead
     private String user_id;
     private FirebaseAuth mAuth;
     private ImageView icLocation;
+    private String zoomUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +86,15 @@ public class UserLocationsActivity extends FragmentActivity implements OnMapRead
         mAuth = FirebaseAuth.getInstance();
         user_id = mAuth.getUid();
         icLocation = (ImageView)findViewById(R.id.ic_location);
+        zoomUserId = getIntent().getStringExtra("user_id");
+        if(zoomUserId == null)
+            focusFlag=false;
+        else {
+            focusFlag=true;
+            onCreateZoom=false;
+        }
+
+
         isLocationServiceRunning = LocationServiceHelper.isLocationServiceRunning(getApplicationContext());
 
         if(requestPermission()) {
@@ -141,7 +151,6 @@ public class UserLocationsActivity extends FragmentActivity implements OnMapRead
             LatLng latLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
             myMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Me"));
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,17));
-
 
         }
 
@@ -241,9 +250,13 @@ public class UserLocationsActivity extends FragmentActivity implements OnMapRead
                     markerList.add(marker);
                     mMarkerMap.put(marker.getId(), ds.getKey());
 
-                    if(ds.getKey().equals(user_id) && onCreateZoom) {
+                    if(ds.getKey().equals(user_id) && onCreateZoom && !focusFlag) {
                         onCreateZoom = false;
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
+                    }
+                    else if(ds.getKey().equals(zoomUserId) && focusFlag) {
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 25));
+                        focusFlag=false;
                     }
 
 
@@ -266,7 +279,7 @@ public class UserLocationsActivity extends FragmentActivity implements OnMapRead
     }
 
     private void zoomToMyLocation() {
-        if(myLocation != null) {
+        if(myLocation != null && !focusFlag) {
             LatLng latLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,17));
         }

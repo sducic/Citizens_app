@@ -18,7 +18,7 @@ public class User {
         this.latitude = 0;
         this.longitude = 0;
         this.profileImageUri=profileImageUri;
-        this.coins=1000;
+        this.coins=0;
 
     }
 

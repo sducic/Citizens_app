@@ -61,9 +61,7 @@ public class UserProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user_profile);
 
         final String usid = getIntent().getStringExtra("user_id");
-        Toast.makeText(getApplicationContext(), "usid: " + usid, Toast.LENGTH_SHORT).show();
-
-
+        
 
         mUsersDatabaseRef = FirebaseDatabase.getInstance().getReference().child("Users").child(usid);
         mFriendRequestDatabase = FirebaseDatabase.getInstance().getReference().child("Friend_req");
@@ -362,7 +360,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 }
                 if(mCurrent_state.equals("friends")) {
 
-                    Intent ni = new Intent(getApplicationContext(), MapsActivityZara.class);
+                    Intent ni = new Intent(getApplicationContext(), UserLocationsActivity.class);
                     ni.putExtra("user_id", usid);
                     startActivity(ni);
                 }

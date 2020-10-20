@@ -418,4 +418,11 @@ public class FeedActivity extends AppCompatActivity {
         });
     }
 
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent i = new Intent(FeedActivity.this,HomePage.class);
+        startActivity(i);
+    }
 }

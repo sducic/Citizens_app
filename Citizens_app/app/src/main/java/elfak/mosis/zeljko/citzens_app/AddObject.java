@@ -65,7 +65,7 @@ public class AddObject extends AppCompatActivity implements View.OnClickListener
 
     public static String objectKey;
 
-    String[] country = { "Kategorija1", "Kategorija2", "Kategorija3", "Ostalo"};
+    String[] country = { "Saobracajna nezgoda", "Komunalni problem", "Radovi na putu", "Ostalo"};
     public static String kategorija;
 
     private User user;

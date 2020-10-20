@@ -25,10 +25,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Friends"
-                android:icon="@drawable/baseline_people_white_24"></com.google.android.material.tabs.TabItem> <com.google.android.material.tabs.TabItem
+                android:icon="@drawable/baseline_people_white_24"></com.google.android.material.tabs.TabItem>
+            <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Requests"></com.google.android.material.tabs.TabItem>
+            android:text="Requests">
+
+            </com.google.android.material.tabs.TabItem>
         </com.google.android.material.tabs.TabLayout>
             
     </com.google.android.material.appbar.AppBarLayout>

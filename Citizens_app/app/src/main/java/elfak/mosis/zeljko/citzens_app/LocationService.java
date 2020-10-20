@@ -50,14 +50,17 @@ public class LocationService extends Service {
     private DatabaseReference mUsersDatabaseRef;
     private LocationCallback locationCallback;
 
+
     private final static long UPDATE_INTERVAL = 4 * 1000;
     private final static long FASTEST_INTERVAL = 1000;
     private final static double earthRadius = 6371000;
     private static final int CHECK_NEARBY_OBJECTS_INTERVAL = 60000;
     private static final int DISTANCE_USERS = 2000;
 
-    private Handler mHandler = new Handler();
+    private Handler mHandler;
     private Runnable mRunnable;
+    private Looper looper;
+
     LatLng currUserPosition;
 
     @Nullable
@@ -68,7 +71,12 @@ public class LocationService extends Service {
 
     @Override
     public void onCreate() {
-        super.onCreate();
+
+        HandlerThread thread = new HandlerThread("ServiceStartArguments");
+        thread.start();
+        looper = thread.getLooper();
+        mHandler = new Handler(looper);
+
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mUsersDatabaseRef = FirebaseDatabase.getInstance().getReference().child("UsersLocation");
         mAuth = FirebaseAuth.getInstance();
@@ -94,7 +102,7 @@ public class LocationService extends Service {
             public void onLocationResult(LocationResult locationResult) {
 
                 Log.d(TAG, "onLocationResult: got location result.");
-
+                Log.d(TAG, "Callback thread: " + String.valueOf(Thread.currentThread().getId()));
                 Location location = locationResult.getLastLocation();
 
                 if (location != null) {
@@ -133,7 +141,7 @@ public class LocationService extends Service {
             return;
         }
 
-        mFusedLocationClient.requestLocationUpdates(mLocationRequestHighAccuracy, locationCallback, Looper.myLooper());
+        mFusedLocationClient.requestLocationUpdates(mLocationRequestHighAccuracy, locationCallback, looper);
     }
 
     private void stopLocationUpdates() {
@@ -147,6 +155,7 @@ public class LocationService extends Service {
             stopLocationUpdates();
             return;
         }
+        Log.d(TAG, "Save user location thread: " + String.valueOf(Thread.currentThread().getId()));
         Map locationMap = new HashMap();
         locationMap.put(mAuth.getUid() + "/" + "longitude", location.getLongitude());
         locationMap.put(mAuth.getUid() + "/" + "latitude", location.getLatitude());
@@ -177,6 +186,7 @@ public class LocationService extends Service {
     }
 
     private void checkNearbyObjects() {
+        Log.d(TAG, String.valueOf(Thread.currentThread().getId()));
         List<LatLng> usersPositions = new ArrayList<LatLng>();
         mUsersDatabaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
