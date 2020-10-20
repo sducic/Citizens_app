@@ -62,17 +62,18 @@ import java.util.Map;
 
 public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
-    GoogleMap map;
-    SupportMapFragment mapFragment;
-    SearchView searchView;
+    private GoogleMap map;
+    private SupportMapFragment mapFragment;
+    private FusedLocationProviderClient client;
 
-    Location currentLocation;
-    FusedLocationProviderClient client;
+    private SearchView searchView;
 
-    double lon,lat;
 
-    Button addObject;
-    Button radius;
+
+    private double lon,lat;
+
+    private Button addObject;
+    private Button radius;
     private boolean selCoorsEnabled = false;
     private LatLng placeLoc;
     public static final int SELECT_COORDINATES = 2;
@@ -82,35 +83,36 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     public static final int CENTER_PLACE_ON_MAP = 1;
 
 
-    boolean toAddObject = false;
-    DatabaseReference database;
+    private Location currentLocation;
+    private Location currentLoc;
+
+    private Location userLoc;
+
+    private List<Location> locationsAR;
+    private List<Object> listOfObject;
+    private List<Marker> AllMarkers;
+    private List<Circle> circles;
+
+
+    private Spinner spinner;
+    private Button btnAddVirtual;
+    private Circle circle;
+    private EditText textMeters;
+
+    private double curLat; //in function for currentLocation
+    private double curLon;
+
+    private DatabaseReference database; //used in func for radius
 
     int position = -1;
 
-    Location currentLoc;
-    List<Marker> AllMarkers;
+    private Bundle extras;
+    private Intent intent;
 
-    EditText textMeters;
-    Circle circle;
-    List<Circle> circles;
-
-    User user;
-
-    Bundle extras;
-    Intent intent;
-
-    Location userLoc;
-    List<Location> locationsAR;
-    double curLat;
-    double curLon;
+    private String izabranaKategorija;
 
 
-    List<Object> listOfObject;
-    Spinner spinner;
-    String izabranaKategorija;
-    DatabaseReference mUsersDatabaseReference;
 
-    Button btnAddVirtual;
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT_WATCH)
 
@@ -120,25 +122,27 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         setContentView(R.layout.activity_maps);
 
 
-         intent = getIntent();
-         extras = intent.getExtras();
-
+        //inicijalizacija
         database = FirebaseDatabase.getInstance().getReference().child("my-objects");
+        mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.google_map);
+        spinner = (Spinner) findViewById(R.id.spinner2);
+        btnAddVirtual =(Button) findViewById(R.id.btn_add_virtual);
+        searchView = findViewById(R.id.sv_location);
+        addObject = findViewById(R.id.add_object_btn);
+        radius = findViewById(R.id.radius);
 
+        userLoc = new Location(LOCATION_SERVICE); //used get current for AR
+        currentLoc = new Location(NETWORK_STATS_SERVICE); //used in radius
 
         locationsAR = new ArrayList<Location>();
-        userLoc = new Location(LOCATION_SERVICE);
-
         listOfObject = new ArrayList<Object>();
         AllMarkers = new ArrayList<Marker>();
 
+        circles = new ArrayList<>();
 
-        spinner = (Spinner) findViewById(R.id.spinner2);
-
-
-        btnAddVirtual =(Button) findViewById(R.id.btn_add_virtual);
-
-
+         intent = getIntent();
+         extras = intent.getExtras();
 
         Intent listIntent = getIntent();
         Bundle positionBundle = listIntent.getExtras();
@@ -146,11 +150,8 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             position = positionBundle.getInt("position");
 
 
-
-
-        searchView = findViewById(R.id.sv_location);
-        mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.google_map);
+        //pribavljanje Google mapa, inicijalizacija mape
+        mapFragment.getMapAsync(this);
 
 
         //initialize fused loc
@@ -160,18 +161,18 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         if(ActivityCompat.checkSelfPermission(Maps.this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-
             //call method
             if(extras == null){
 
+                //u slucaju da se otvara iz feed-a
                 getCurrentLocation();
             }
+
             getProblemsLocations();
+            getCategories();
+            getArObject();
+
             setOnMapClickListener();
-           // getArObject();
-
-
-
 
         } else {
             //when permission denied
@@ -213,15 +214,8 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             }
         });
 
-        mapFragment.getMapAsync(this);
-
-
-
 
         //add object on click on map
-
-        addObject = findViewById(R.id.add_object_btn);
-
         addObject.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -231,31 +225,22 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                     selCoorsEnabled = true;
                     setOnMapClickListener();
                                  }
-
-
             }
         });
 
 
-        circles = new ArrayList<>();
-
-
-        currentLoc = new Location(NETWORK_STATS_SERVICE);
-        radius = findViewById(R.id.radius);
         radius.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                funcForCall();
+
+
+                    funcForCall();
+
+
             }
         });
 
-
-
-        ////////////////
-
-
-        getCategories();
-
+       // getCategories();
 
         btnAddVirtual.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -270,36 +255,6 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
     }
 
-    private void getCurrentLocation() {
-        //initialize task location
-
-        Task<Location> task = client.getLastLocation();
-        task.addOnSuccessListener(new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(final Location location) {
-                //when success
-                if(location != null) {
-                    mapFragment.getMapAsync(new OnMapReadyCallback() {
-                        @Override
-                        public void onMapReady(GoogleMap googleMap) {
-                            //initialize lat lng
-                            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-
-                            //create marker
-                            MarkerOptions options = new MarkerOptions().position(latLng).title("Your location");
-                            //zoom
-                            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
-                            googleMap.addMarker(options);
-
-                        }
-                    });
-                }
-            }
-        });
-
-
-    }
-
 
     public void onMapReady(GoogleMap googleMap) {
 
@@ -307,7 +262,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
         // u slucaju da je mapa otvorena iz feed dela, da prikaze objekat na mapi
         if(extras != null) {
-            double lat =getIntent().getExtras().getDouble("Latitude");
+            double lat = getIntent().getExtras().getDouble("Latitude");
             double lon = getIntent().getExtras().getDouble("Longitude");
             Toast.makeText(getApplicationContext(),lat + " + " + lon, Toast.LENGTH_SHORT);
             LatLng ll = new LatLng(lat, lon);
@@ -315,8 +270,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                     .target(ll)
                     .zoom(17).build();
             map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            //map.animateCamera(CameraUpdateFactory.newLatLngZoom(ll, 170));
-           // map.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
+
         }
 
     }
@@ -327,7 +281,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(requestCode == 44){
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //getCurrentLocation();
+
 
                 if(extras == null){
 
@@ -336,7 +290,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 getProblemsLocations();
                 setOnMapClickListener();
 
-                getCurrentLocationForAR();
+               // getCurrentLocationForAR();
                 getArObject();
                 getCategories();
             }
@@ -362,18 +316,46 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         }
     }
 
+    //lokacija preko GPS-a
+    private void getCurrentLocation() {
+        //initialize task location
+
+        Task<Location> task = client.getLastLocation();
+        task.addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(final Location location) {
+                //when success
+                if(location != null) {
+                    mapFragment.getMapAsync(new OnMapReadyCallback() {
+                        @Override
+                        public void onMapReady(GoogleMap googleMap) {
+                            //initialize lat lng
+                            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+
+                            currentLoc.setLatitude(location.getLatitude());
+                            currentLoc.setLongitude(location.getLongitude());
+                            //create marker
+                            MarkerOptions options = new MarkerOptions().position(latLng).title("Your location").icon(getMarkerIcon("#FF032791"));
+                            //zoom
+                            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
+                            googleMap.addMarker(options);
+
+                        }
+                    });
+                }
+            }
+        });
+
+
+    }
+
 
     private void setOnMapClickListener(){
 
         if(map!=null) {
-
-
             map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-
                 @Override
                 public void onMapClick(LatLng latLng) {
-
-
 
                         String lon = Double.toString(latLng.longitude);
                         String lat = Double.toString(latLng.latitude);
@@ -390,21 +372,10 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                         startActivityForResult(i,1);
 
                         finish();
-
-
-
-
-
                 }
             });
         }
     }
-
-
-
-
-    ////////////////////////////////////////////////////////////////////////
-
 
 
     private void getProblemsLocations() {
@@ -428,8 +399,6 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
                      Object object = new Object(description,category,lat,lon);
                      listOfObject.add(object);
-                    //map.addMarker(options);
-                  //  AllMarkers.add(mLocationMarker);
                 }
             }
 
@@ -439,34 +408,10 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             }
         });
 
-
-
-
-
     }
-
-
 
     private void radiusFunction()
     {
-        ///current Loc on Map
-       Task<Location> task = client.getLastLocation();
-        task.addOnSuccessListener(new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(final Location location) {
-                //when success
-                if(location != null) {
-                    mapFragment.getMapAsync(new OnMapReadyCallback() {
-                        @Override
-                        public void onMapReady(GoogleMap googleMap) {
-                            //initialize lat lng
-                            currentLoc.setLatitude(location.getLatitude());
-                            currentLoc.setLongitude(location.getLongitude());
-                        }
-                    });
-                }
-            }
-        });
 
         //show object
         database.addValueEventListener(new ValueEventListener() {
@@ -486,8 +431,6 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                     textMeters =  (EditText)findViewById(R.id.meters);
                     String value = textMeters.getText().toString();
                     double distance = currentLoc.distanceTo(objectLoc);
-
-
 
                     //show only object in radius
                     if(distance < Integer.valueOf(value)) {
@@ -561,7 +504,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     ///////////////////ar
 
 
-    private void getCurrentLocationForAR() {
+    /*private void getCurrentLocationForAR() {
 
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -584,7 +527,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             }
         };
         uidRef.addListenerForSingleValueEvent(valueEventListener);
-    }
+    }*/
     private void getArObject()
     {
 
@@ -602,7 +545,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
                     LatLng latLng = new LatLng(lat_ar, lon_ar);
 
-                    MarkerOptions options = new MarkerOptions().position(latLng).title("AR").icon(getMarkerIcon("#FF032791"));
+                    MarkerOptions options = new MarkerOptions().position(latLng).title("AR").icon(getMarkerIcon("#FF619715"));
                     Marker marker = map.addMarker(options);
                     AllMarkers.add(marker);
 
@@ -635,29 +578,9 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     private void compareArLocations()
     {
 
-        //Toast.makeText(getApplicationContext(),String.valueOf(locationasAR.size()),Toast.LENGTH_SHORT).show();
-     /*   Task<Location> task = client.getLastLocation();
-        task.addOnSuccessListener(new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                if(location != null) {
-                    mapFragment.getMapAsync(new OnMapReadyCallback() {
-                        @Override
-                        public void onMapReady(GoogleMap googleMap) {
-                            Location userLoc = new Location(LOCATION_SERVICE);
-                            userLoc.setLatitude(location.getLatitude());
-                            userLoc.setLongitude(location.getLongitude());
-                            Toast.makeText(getApplicationContext(),userLoc.getLatitude() + " : " + userLoc.getLongitude(),Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }}
-        });
-*/
-
-
         for(Location location : locationsAR)
         {
-            float n = distance(userLoc.getLatitude(), userLoc.getLongitude(),location.getLatitude(),location.getLongitude());
+            float n = distance(currentLoc.getLatitude(), currentLoc.getLongitude(),location.getLatitude(),location.getLongitude());
 
 
             if(n < 10) {
@@ -679,6 +602,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 });
                 break;
             }
+
         }
     }
 

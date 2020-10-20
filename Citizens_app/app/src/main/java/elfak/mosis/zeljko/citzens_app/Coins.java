@@ -41,7 +41,7 @@ public class Coins extends AppCompatActivity {
         mUsersList.setLayoutManager(linearLayoutManager);
 
 
-        mUsersDatabaseReference= FirebaseDatabase.getInstance().getReference().child("Users");
+        mUsersDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
         mUsersDatabaseReference.keepSynced(true);
 
 
@@ -59,9 +59,6 @@ public class Coins extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        //String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        //mUsersDatabaseReference.child(uid).child("online").setValue("true");
 
         //-------FIREBASE RECYCLE VIEW ADAPTER-------
         FirebaseRecyclerAdapter<User , Coins.UserViewHolder> firebaseRecyclerAdapter=new FirebaseRecyclerAdapter<User, Coins.UserViewHolder>(
@@ -82,27 +79,6 @@ public class Coins extends AppCompatActivity {
 
                 viewHolder.setNumber(num);      //redni broj
                 num++;
-
-
-
-
-               // viewHolder.setImage(pom);
-
-               /* viewHolder.setImage(users.getThumbImage(),getApplicationContext());
-                final String user_id=getRef(position).getKey();
-
-
-                viewHolder.mView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        Intent profileIntent=new Intent(Coins.this,Profile.class);
-                        profileIntent.putExtra("user_id",user_id);
-                        startActivity(profileIntent);
-                    }
-                });*/
-
-
             }
         };
         mUsersList.setAdapter(firebaseRecyclerAdapter);
@@ -137,18 +113,17 @@ public class Coins extends AppCompatActivity {
             Picasso.get().load(pom).into(userImageView);
         }
 
-     /*  public void setImage(String thumb_image, Context ctx) {
-            CircleImageView userImageView = (CircleImageView)mView.findViewById(R.id.circleImageViewUserImage);
-            //Log.e("thumb URL is--- ",thumb_image);
-            Picasso.get().load(thumb_image).placeholder(R.drawable.user_img).into(userImageView);
-        }*/
     }
 
     @Override
     protected void onStop() {
-        //String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        //mUsersDatabaseReference.child(uid).child("online").setValue(ServerValue.TIMESTAMP);
-
         super.onStop();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent i = new Intent(Coins.this,HomePage.class);
+        startActivity(i);
     }
 }

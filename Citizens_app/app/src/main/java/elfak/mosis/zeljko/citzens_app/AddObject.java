@@ -50,32 +50,49 @@ import java.util.UUID;
 public class AddObject extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
 
-    Button addButton;
-    boolean editMode = true;
-    int position = -1;
+    private Button addButton;
+    private boolean editMode = true;
+    private int position = -1;
 
-    EditText name, description, category, latitude, longitude;
+    private  EditText name, description, category, latitude, longitude;
+
     //slika
     ImageView reportImage;
     private static Bitmap slika = null;
     public static String profileImageUri="";
     int TAKE_IMAGE_CODE = 10001;
     private static final String TAG = "AddObject";
+
     public static String objectKey;
 
     String[] country = { "Kategorija1", "Kategorija2", "Kategorija3", "Ostalo"};
     public static String kategorija;
 
-    User user;
+    private User user;
 
-    FirebaseAuth fAuth;
+
+    private EditText latitudeEdit;
+    private EditText longitudeEdit;
+    private Spinner spin;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_object);
 
+        addButton = findViewById(R.id.buttonAdd);
 
+        name = (EditText) findViewById(R.id.editTextName);
+        description = (EditText) findViewById(R.id.editTextDescription);
+        longitude = (EditText) findViewById(R.id.longitude_text);
+        latitude = (EditText) findViewById(R.id.latitude_text);
 
+        latitudeEdit = (EditText)findViewById((R.id.latitude_text));
+        longitudeEdit = (EditText)findViewById((R.id.longitude_text));
+        reportImage = findViewById(R.id.imageView4);
+
+        //Getting the instance of Spinner and applying OnItemSelectedListener on it
+        spin = (Spinner) findViewById(R.id.spinner);
 
         try{
             Intent listIntent=getIntent();
@@ -91,12 +108,6 @@ public class AddObject extends AppCompatActivity implements View.OnClickListener
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        EditText latitudeEdit = (EditText)findViewById((R.id.latitude_text));
-        EditText longitudeEdit = (EditText)findViewById((R.id.longitude_text));
-        reportImage = findViewById(R.id.imageView4);
-
-        //Getting the instance of Spinner and applying OnItemSelectedListener on it
-        Spinner spin = (Spinner) findViewById(R.id.spinner);
         spin.setOnItemSelectedListener(this);
 
         //Creating the ArrayAdapter instance having the country list
@@ -107,14 +118,8 @@ public class AddObject extends AppCompatActivity implements View.OnClickListener
 
         if(position<=0)
         {
-
-          //  Object object = MyObjectData.getInstance().getObject(position);
-
-
-            Toast.makeText(getApplicationContext(),"nestooo", Toast.LENGTH_SHORT).show();
-
+            //latitude i longitude putExtra u intent
             String st = getIntent().getExtras().getString("Latitude");
-
             latitudeEdit.setText(st);
 
             String st1 = getIntent().getExtras().getString("Longitude");
@@ -154,16 +159,6 @@ public class AddObject extends AppCompatActivity implements View.OnClickListener
 
             }
         });
-
-
-
-        addButton = findViewById(R.id.buttonAdd);
-
-         name = (EditText) findViewById(R.id.editTextName);
-         description = (EditText) findViewById(R.id.editTextDescription);
-         longitude = (EditText) findViewById(R.id.longitude_text);
-         latitude = (EditText) findViewById(R.id.latitude_text);
-
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -213,15 +208,8 @@ public class AddObject extends AppCompatActivity implements View.OnClickListener
                 uidRef.addListenerForSingleValueEvent(valueEventListener);
 
                 startActivity(new Intent(getApplicationContext(),FeedActivity.class));
-
-
-
-
-
             }
         });
-
-
 
 
         name.addTextChangedListener(new TextWatcher() {

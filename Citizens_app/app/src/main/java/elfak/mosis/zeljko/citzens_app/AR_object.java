@@ -4,11 +4,8 @@ import com.google.firebase.database.DatabaseReference;
 
 public class AR_object {
 
-
-
     public double latitude;
     public double longitude;
-    //public String description;
     public String key;
 
     public AR_object()
@@ -20,9 +17,10 @@ public class AR_object {
         this.longitude = lon;
 
     }
-
-
-public String getKey(){return  this.key;}
+    public String getKey()
+    {
+        return  this.key;
+    }
     public double getLatitude(){return this.latitude;}
     public double getLongitude(){return this.longitude;}
 }

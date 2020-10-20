@@ -33,18 +33,13 @@ public class AR_activity_add_new_object extends AppCompatActivity implements  Vi
     private ArFragment arFragment;
     private ArrayList<AR_object> myObjects;
     private HashMap<String,Integer> myObjectsKeyIndexMapping;
-    MyObjectData.ListUpdatedEventListener updateListener;
-
-
     public static String objectKey;
 
 
 
-    Button button;
-    Double latitude;
-    Double longitude;
-
-
+    private Button button;
+    private double latitude;
+    private double longitude;
 
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -54,14 +49,11 @@ public class AR_activity_add_new_object extends AppCompatActivity implements  Vi
         setContentView(R.layout.activity_a_r_activity_add_new_object);
 
 
-
         /////
         myObjects = new ArrayList<AR_object>();
         myObjectsKeyIndexMapping = new HashMap<String,Integer>();
 
         /////
-
-
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.arFragment);
 
         // adding listener for detecting plane
@@ -74,11 +66,6 @@ public class AR_activity_add_new_object extends AppCompatActivity implements  Vi
                     .build()
                     .thenAccept(modelRenderable -> addModelToScene(anchor, modelRenderable));
             getCurrentLocation();
-
-
-
-
-
         });
 
 

@@ -113,8 +113,6 @@ public class AR_get_more_coins extends AppCompatActivity {
 
                         soundPool.play(sound, 1, 1, 1, 0, 1);
                     }
-
-
                 });
 
                 try {
@@ -129,8 +127,6 @@ public class AR_get_more_coins extends AppCompatActivity {
             });
 
         }).start();
-
-
         AddCoins();
     }
 
@@ -203,11 +199,8 @@ public class AR_get_more_coins extends AppCompatActivity {
                 });
     }
 
-
-
     private void AddCoins()
     {
-
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();

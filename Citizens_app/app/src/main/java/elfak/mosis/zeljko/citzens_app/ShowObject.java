@@ -24,13 +24,13 @@ import com.squareup.picasso.Picasso;
 
 public class ShowObject extends AppCompatActivity {
 
-    ImageView objectPhotoView, profileImageView;
-    TextView emailView, dateView, descriptionView;
+    private ImageView objectPhotoView, profileImageView;
+    private TextView emailView, dateView, descriptionView;
 
-    Button showOnMap;
+    private Button showOnMap;
     //public static String nameUser,profileIUriUser;
 
-    Double lon,lat;
+    private Double lon,lat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +45,25 @@ public class ShowObject extends AppCompatActivity {
         descriptionView = findViewById(R.id.description);
 
 
-        //preuzimanje object id-a iz prethodnog intenta
+        getUsersInformation(savedInstanceState);
+
+
+        showOnMap = (Button) findViewById(R.id.showOnMap);
+        showOnMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(),Maps.class);
+                i.putExtra("Longitude",lon);
+                i.putExtra("Latitude",lat);
+                startActivity(i);
+            }
+        });
+
+    }
+
+
+    private void getUsersInformation(Bundle savedInstanceState)
+    {
         String newString;
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
@@ -58,7 +76,6 @@ public class ShowObject extends AppCompatActivity {
             newString = (String) savedInstanceState.getSerializable("object_id");
         }
 
-
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
         DatabaseReference baza = ref.child("my-objects").child(newString).child("imgUri");
 
@@ -67,7 +84,6 @@ public class ShowObject extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String profImgUri = dataSnapshot.getValue(String.class);
                 Uri myUri = Uri.parse(profImgUri);
-
                 Picasso.get().load(myUri).into(objectPhotoView);
             }
 
@@ -86,9 +102,9 @@ public class ShowObject extends AppCompatActivity {
                 String date = dataSnapshot.child("date").getValue(String.class);
                 String description = dataSnapshot.child("description").getValue(String.class);
                 String userID = dataSnapshot.child("UserID").getValue(String.class);
-                 lat = dataSnapshot.child("latitude").getValue(Double.class);
-                 lon = dataSnapshot.child("longitude").getValue(Double.class);
-                //email.setText(mail);
+                lat = dataSnapshot.child("latitude").getValue(Double.class);
+                lon = dataSnapshot.child("longitude").getValue(Double.class);
+
                 dateView.setText(date);
                 descriptionView.setText(description);
 
@@ -105,19 +121,6 @@ public class ShowObject extends AppCompatActivity {
 
         };
         uidRef.addListenerForSingleValueEvent(valueEventListener);
-
-
-        showOnMap = (Button) findViewById(R.id.showOnMap);
-        showOnMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(getApplicationContext(),Maps.class);
-                i.putExtra("Longitude",lon);
-                i.putExtra("Latitude",lat);
-                startActivity(i);
-            }
-        });
-
     }
 
     private void getUserInfo(String uid) {

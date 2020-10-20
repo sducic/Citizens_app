@@ -24,7 +24,6 @@ public class AR_object_data {
     private static AR_object_data sInstance = null;
 
 
-
     private AR_object_data() {
         AR_objects = new ArrayList<AR_object>();
         ar_objectsKeyIndexMapping = new HashMap<String, Integer>();
